@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
 	/** Logging tag */
 	private static final String TAG = "Main";
 	
-	private static final String AUTH_URL = "https://ac.smartcampuslab.it/accesstoken-provider-dev/ac";
+	private static final String AUTH_URL = "https://vas-dev.smartcampuslab.it/accesstoken-provider/ac";
 	
 	private static final String AC_SERVICE_ADDR = "https://vas-dev.smartcampuslab.it/acService";
 	private static final String PROFILE_SERVICE_ADDR = "https://vas-dev.smartcampuslab.it";
