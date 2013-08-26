@@ -16,7 +16,6 @@
 package eu.trentorise.smartcampus.template;
 
 import java.io.ByteArrayOutputStream;
-import java.util.List;
 
 import smartcampus.android.template.standalone.R;
 import android.app.Activity;
@@ -33,59 +32,41 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
+import eu.trentorise.smartcampus.filestorage.client.model.Account;
 import eu.trentorise.smartcampus.filestorage.client.model.Metadata;
 import eu.trentorise.smartcampus.filestorage.client.model.Resource;
-import eu.trentorise.smartcampus.filestorage.client.model.Storage;
+import eu.trentorise.smartcampus.filestorage.client.model.StorageType;
 import eu.trentorise.smartcampus.storage.AndroidFilestorage;
-import eu.trentorise.smartcampus.storage.model.StorageType;
-import eu.trentorise.smartcampus.storage.model.UserAccount;
 
 public class FileActivity extends Activity {
 
 	private static final int AUTH_REQUESTCODE = 100;
 	private static final int PHOTO_REQUESTCODE = 200;
 
-	/** Logging tag */
-	private static final String TAG = "File";
-
-	private UserAccount mUserAccount = null;
+	private String mAccountId = null;
 
 	/**
 	 * Provides access to the authentication mechanism. Used to retrieve the
 	 * token
 	 */
 	private SCAccessProvider mAccessProvider = new EmbeddedSCAccessProvider();
-	/** Access token for the application user */
-	private String mToken = null;
 	/** Filestorage connector reference */
 	private AndroidFilestorage mFilestorage = null;
-	/** ID of the resource stored */
-	private String imageResourceId = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// LogConfigurator logConfigurator = new LogConfigurator();
-		// logConfigurator.configure();
-		// try {
-		// mToken = mAccessProvider.readToken(FileActivity.this,
-		// Constants.CLIENT_ID, Constants.CLIENT_SECRET);
-		// } catch (AACException e) {
-		// Log.e(TAG, "Error retrieving user token", e);
-		// }
-		mFilestorage = new AndroidFilestorage(Constants.HOST,
-				Constants.APPNAME, Constants.APPTOKEN);
-		// if (mToken == null) {
-		// Log.e(TAG, "No auth token");
-		// finish();
-		// }
+		mFilestorage = new AndroidFilestorage(Constants.FILESTORAGE_SERVICE, Constants.APPID);
+		mAccessProvider = new EmbeddedSCAccessProvider();
 
 		setContentView(R.layout.file_mgmt);
 
 		Button btn = (Button) findViewById(R.id.photo_btn);
+		if (mAccountId == null) {
+			btn.setEnabled(false);
+		}
 		btn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -96,46 +77,36 @@ public class FileActivity extends Activity {
 		});
 
 		// verify user account: if not present, create one
-		if (mUserAccount == null) {
-			new AsyncTask<Void, Void, List<Storage>>() {
+		if (mAccountId == null) {
+			new AsyncTask<Void, Void, Object>(){
 				@Override
-				protected List<Storage> doInBackground(Void... params) {
+				protected Object doInBackground(Void... params) {
 					try {
-						// read app accounts
-						String mToken = mAccessProvider.readToken(
-								FileActivity.this, Constants.CLIENT_ID,
-								Constants.CLIENT_SECRET);
-						return mFilestorage.getStoragesByUser(mToken);
-					} catch (AACException e) {
-						Log.e(TAG, "Exception getting user token", e);
-						return null;
+						String token = mAccessProvider.readToken(FileActivity.this, Constants.CLIENT_ID, Constants.CLIENT_SECRET);
+						Account account = mFilestorage.getAccountByUser(token);
+						if (account != null) return account;
+						return token;
 					} catch (Exception e) {
-						Log.e(TAG, "Exception getting application storages", e);
 						return null;
 					}
 				}
-
-				@Override
-				protected void onPostExecute(List<Storage> result) {
-					// request new account for the required app
-					if (result != null && result.size() > 0) {
-						Storage storage = result.get(0);
+				protected void onPostExecute(Object res) {
+					if (res != null && res instanceof Account) {
+						mAccountId = ((Account)res).getId();
+						findViewById(R.id.photo_btn).setEnabled(true);
+					}
+					else if (res != null) {
 						try {
-							String mToken = mAccessProvider.readToken(
-									FileActivity.this, Constants.CLIENT_ID,
-									Constants.CLIENT_SECRET);
-							mFilestorage.startAuthActivityForResult(
-									FileActivity.this, mToken,
-									storage.getName(), storage.getId(),
-									StorageType.DROPBOX, AUTH_REQUESTCODE);
-						} catch (AACException e) {
-							Log.e(TAG, "Exception getting user token", e);
+							mFilestorage.startAuthActivityForResult(FileActivity.this, res.toString(), StorageType.DROPBOX, AUTH_REQUESTCODE);
+						} catch (Exception e) {
+							Toast.makeText(FileActivity.this, "Failed to authorize storage", Toast.LENGTH_LONG).show();
+							finish();
 						}
 					} else {
-						Toast.makeText(FileActivity.this, "No Accounts!",
-								Toast.LENGTH_LONG).show();
+						Toast.makeText(FileActivity.this, "Failed to authorize storage", Toast.LENGTH_LONG).show();
+						finish();
 					}
-				}
+				};
 			}.execute();
 		}
 	}
@@ -146,13 +117,14 @@ public class FileActivity extends Activity {
 		if (requestCode == AUTH_REQUESTCODE) {
 			// user account acquired
 			if (resultCode == Activity.RESULT_OK) {
-				mUserAccount = data
-						.getParcelableExtra(AndroidFilestorage.EXTRA_OUTPUT_USERACCOUNT);
+				mAccountId = data.getStringExtra(AndroidFilestorage.EXTRA_OUTPUT_ACCOUNT_ID);
 				Toast.makeText(
 						this,
-						"User account created and stored: id = "
-								+ mUserAccount.getId(), Toast.LENGTH_LONG)
+						"User account created and stored " , Toast.LENGTH_LONG)
 						.show();
+				
+				findViewById(R.id.photo_btn).setEnabled(true);
+				
 				// user account cancelled
 			} else if (resultCode == Activity.RESULT_CANCELED) {
 				Toast.makeText(this, "CANCELLED", Toast.LENGTH_LONG).show();
@@ -184,16 +156,16 @@ public class FileActivity extends Activity {
 				image.compress(Bitmap.CompressFormat.JPEG, 100,
 						byteArrayBitmapStream);
 
+				String token = mAccessProvider.readToken(FileActivity.this, Constants.CLIENT_ID, Constants.CLIENT_SECRET);
 				// store file remotely
 				Metadata metadata = mFilestorage.storeResourceByUser(
 						byteArrayBitmapStream.toByteArray(),
 						"image" + System.currentTimeMillis() + ".jpg",
-						"image/jpg", mToken, mUserAccount.getId(), false);
+						"image/jpg", token, mAccountId, false);
 
 				if (metadata != null) {
 					// read file remotely
-					Resource resource = mFilestorage.getMyResourceByUser(
-							mToken, metadata.getResourceId());
+					Resource resource = mFilestorage.getResourceByUser(token, metadata.getResourceId());
 					if (resource == null)
 						return null;
 					byte[] content = resource.getContent();

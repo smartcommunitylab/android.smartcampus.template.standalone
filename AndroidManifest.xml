@@ -59,37 +59,9 @@
             android:label="@string/title_activity_file" >
         </activity>
         <activity
-            android:name="eu.trentorise.smartcampus.storage.dropbox.DropboxAuth"
+            android:name="eu.trentorise.smartcampus.storage.AuthActivity"
             android:configChanges="orientation|keyboard" >
         </activity>
-        <activity
-            android:name="com.dropbox.client2.android.AuthActivity"
-            android:configChanges="orientation|keyboard"
-            android:launchMode="singleTask" >
-            <intent-filter>
-                <data android:scheme="db-yerhpkuav29wxou" />
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        
-        <!-- NEEDED ?? -->
-<!--                  <service android:name="eu.trentorise.smartcampus.ac.authenticator.AuthenticationService"  -->
-<!--              android:exported="true"  -->
-<!--              android:permission="eu.trentorise.smartcampus.ac.AUTHENTICATE"> -->
-<!--             <intent-filter> -->
-<!--                 <action -->
-<!--                     android:name="android.accounts.AccountAuthenticator" /> -->
-<!--             </intent-filter> -->
-<!--             <meta-data -->
-<!--                 android:name="android.accounts.AccountAuthenticator" -->
-<!--                 android:resource="@xml/authenticator" /> -->
-<!--         </service> -->
-        
-<!--         <activity -->
-<!--             android:name="eu.trentorise.smartcampus.ac.authenticator.AuthenticatorActivity" -->
-<!--             android:configChanges="orientation|screenSize"/> -->
         
     </application>
 

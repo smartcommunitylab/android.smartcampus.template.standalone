@@ -45,28 +45,16 @@ public class MainActivity extends Activity {
 	/** Logging tag */
 	private static final String TAG = "Main";
 
-	private static final String AC_SERVICE_ADDR = "https://vas-dev.smartcampuslab.it/acService";
-	private static final String PROFILE_SERVICE_ADDR = "https://vas-dev.smartcampuslab.it";
-
 	/**
 	 * Provides access to the authentication mechanism. Used to retrieve the
 	 * token
 	 */
 	private SCAccessProvider mAccessProvider = null;
-	/** Access token for the application user */
-	private String mToken = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		// try {
-		// Constants.setAuthUrl(getApplicationContext(), AUTH_URL);
-		// } catch (NameNotFoundException e1) {
-		// Log.e(TAG, "problems with configuration.");
-		// finish();
-		// }
 
 		findViewById(R.id.file_button).setOnClickListener(
 				new OnClickListener() {
