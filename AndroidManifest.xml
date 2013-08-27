@@ -23,24 +23,13 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="16" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    
+    <uses-permission android:name="android.permission.INTERNET" />    
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <meta-data android:name="SHARED_PACKAGE" android:value="smartcampus.android.template.standalone"/>
-        <meta-data android:name="ACCOUNT_TYPE" android:value="smartcampus.android.template.standalone"/>
-        <meta-data android:name="ACCOUNT_NAME" android:value="SmartCampus Android Template"/>
         
         <!--  the Activity class that perform the authentication/authorization -->
          <activity android:name="eu.trentorise.smartcampus.ac.embedded.EmbeddedAuthActivity"/>
@@ -50,7 +39,6 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
