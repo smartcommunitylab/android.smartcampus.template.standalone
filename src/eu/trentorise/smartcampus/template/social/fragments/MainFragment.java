@@ -25,6 +25,11 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import eu.trentorise.smartcampus.template.social.custom.MainAdapter;
 
+/**
+ * Landing page fragment
+ * @author raman
+ *
+ */
 public class MainFragment extends Fragment {
 	private GridView gridview;
 	private FragmentManager fragmentManager;

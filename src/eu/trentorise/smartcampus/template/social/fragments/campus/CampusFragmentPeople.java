@@ -40,6 +40,11 @@ import eu.trentorise.smartcampus.template.social.custom.UserAdapter;
 import eu.trentorise.smartcampus.template.social.custom.UserAdapter.UserOptionsHandler;
 import eu.trentorise.smartcampus.template.social.custom.data.CMHelper;
 
+/**
+ * Form for user search
+ * @author raman
+ *
+ */
 public class CampusFragmentPeople extends Fragment {
 
 	private static final String ARG_GROUP = "ARG_GROUP";
