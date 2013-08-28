@@ -24,6 +24,11 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+/**
+ * Adapter for check list of user groups
+ * @author raman
+ *
+ */
 public class CheckListAdapter extends ArrayAdapter<CheckListAdapter.CheckListItem> {
 
 	Context context;

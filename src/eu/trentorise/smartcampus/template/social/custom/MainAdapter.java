@@ -29,7 +29,11 @@ import android.widget.TextView;
 import eu.trentorise.smartcampus.template.social.fragments.campus.CampusFragmentPeople;
 import eu.trentorise.smartcampus.template.social.fragments.groups.MyGroupsFragment;
 
-
+/**
+ * Adapter for landing page for social demo fragment
+ * @author raman
+ *
+ */
 public class MainAdapter extends BaseAdapter {
 	private Context context;
 	private FragmentManager fragmentManager;
@@ -49,32 +53,25 @@ public class MainAdapter extends BaseAdapter {
         ViewHolder holder = new ViewHolder();
 		if (convertView == null) {
 			holder.text = new TextView(context);
-			holder.text.setBackgroundColor(context.getResources().getColor(
-					android.R.color.transparent));
-			holder.text.setCompoundDrawablesWithIntrinsicBounds(null, context
-					.getResources().getDrawable(ACTIONS[position].thumbnail),
-					null, null);
-			holder.text.setText(ACTIONS[position].description);
-			holder.text.setTextColor(context.getResources().getColor(
-					R.color.sc_dark_gray));
-			holder.text.setGravity(Gravity.CENTER);
-			holder.text.setOnClickListener(new CategoriesOnClickListener(position));
 		} else{
 			holder.text = (TextView) convertView;
-			holder.text.setText(((TextView) convertView).getText());
-
-			holder.text.setBackgroundColor(context.getResources().getColor(
-					android.R.color.transparent));
-			holder.text.setCompoundDrawablesWithIntrinsicBounds(null, context
-					.getResources().getDrawable(ACTIONS[position].thumbnail),
-					null, null);
-			holder.text.setTextColor(((TextView) convertView).getTextColors());
-			holder.text.setGravity(((TextView) convertView).getGravity());
-			holder.text.setOnClickListener(new CategoriesOnClickListener(position));
 		}
+		prepareHolder(position, holder);
 		return holder.text;
 		
 		
+	}
+
+	private void prepareHolder(final int position, ViewHolder holder) {
+		holder.text.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+		holder.text.setCompoundDrawablesWithIntrinsicBounds(null, context
+				.getResources().getDrawable(ACTIONS[position].thumbnail),
+				null, null);
+		holder.text.setText(ACTIONS[position].description);
+		holder.text.setTextColor(context.getResources().getColor(
+				R.color.sc_dark_gray));
+		holder.text.setGravity(Gravity.CENTER);
+		holder.text.setOnClickListener(new CategoriesOnClickListener(position));
 	}
 
 	static class ViewHolder{
@@ -103,38 +100,6 @@ public class MainAdapter extends BaseAdapter {
 		}
 		
 	}
-	/*
-	 * @Override public View getView(final int position, View convertView,
-	 * ViewGroup parent) { ImageButton tmp; if (convertView == null) { tmp = new
-	 * ImageButton(context);
-	 * tmp.setBackgroundColor(context.getResources().getColor
-	 * (android.R.color.transparent));
-	 * tmp.setImageDrawable(context.getResources().getDrawable(
-	 * ACTIONS[position].thumbnail));
-	 * //tmp.setCompoundDrawablesWithIntrinsicBounds(null,
-	 * context.getResources().getDrawable( // ACTIONS[position].thumbnail),
-	 * //null, null); tmp.setOnClickListener(new OnClickListener() {
-	 * 
-	 * @Override public void onClick(View v) { // Starting transaction
-	 * FragmentTransaction ft = fragmentManager.beginTransaction(); Fragment
-	 * fragment = (Fragment) Fragment.instantiate(context,
-	 * ACTIONS[position].fragmentClass.getName()); // Replacing old fragment
-	 * with new one ft.replace(android.R.id.content, fragment);
-	 * ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-	 * ft.addToBackStack(null); ft.commit();
-	 * 
-	 * 
-	 * // String cat = ((Button) v).getText().toString(); // FragmentTransaction
-	 * fragmentTransaction = fragmentManager // .beginTransaction(); //
-	 * PoisListingFragment fragment = new PoisListingFragment(); // Bundle args
-	 * = new Bundle(); // args.putString(PoisListingFragment.ARG_CATEGORY, cat);
-	 * // fragment.setArguments(args); // fragmentTransaction //
-	 * .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE); //
-	 * fragmentTransaction.replace(android.R.id.content, fragment, "pois"); //
-	 * fragmentTransaction.addToBackStack(fragment.getTag()); //
-	 * fragmentTransaction.commit(); } }); } else tmp = (ImageButton)
-	 * convertView; return tmp; }
-	 */
 	@Override
 	public int getCount() {
 		return ACTIONS.length;

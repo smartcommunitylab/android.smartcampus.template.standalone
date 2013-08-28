@@ -44,6 +44,11 @@ import eu.trentorise.smartcampus.template.social.custom.UserAdapter.UserOptionsH
 import eu.trentorise.smartcampus.template.social.custom.data.CMHelper;
 import eu.trentorise.smartcampus.template.social.fragments.campus.CampusFragmentPeople;
 
+/**
+ * User groups viewer. Spinner to select the group plus the list of the users in the group.
+ * @author raman
+ *
+ */
 public class MyGroupsFragment extends Fragment {
 
 	private ArrayAdapter<User> usersListAdapter;

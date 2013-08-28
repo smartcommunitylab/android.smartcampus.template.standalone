@@ -29,6 +29,11 @@ import eu.trentorise.smartcampus.social.model.Group;
 import eu.trentorise.smartcampus.template.social.custom.DialogHandler;
 import eu.trentorise.smartcampus.template.social.custom.data.CMHelper;
 
+/**
+ * Dialog for creating a new group
+ * @author raman
+ *
+ */
 public class MyGroupsAddDialog extends Dialog {
 
 	private DialogHandler<String> handler = null;

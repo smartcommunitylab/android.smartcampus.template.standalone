@@ -15,7 +15,17 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.template.social.custom;
 
+/**
+ * Used to pass the control from the dialog back to the context where it was called.
+ * @author raman
+ *
+ * @param <T>
+ */
 public interface DialogHandler<T> {
 
+	/**
+	 * called when the dialog is positively confirmed
+	 * @param result
+	 */
 	public void handleSuccess(T result);
 }

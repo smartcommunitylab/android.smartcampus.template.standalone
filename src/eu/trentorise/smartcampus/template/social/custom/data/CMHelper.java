@@ -23,9 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import android.app.Activity;
 import android.content.Context;
-import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
@@ -38,6 +36,11 @@ import eu.trentorise.smartcampus.socialservice.SocialService;
 import eu.trentorise.smartcampus.socialservice.SocialServiceException;
 import eu.trentorise.smartcampus.template.social.Constants;
 
+/**
+ * Methods to access the remote services
+ * @author raman
+ *
+ */
 public class CMHelper {
 
 	private static CMHelper instance = null;
@@ -45,26 +48,16 @@ public class CMHelper {
 	private static SCAccessProvider accessProvider = new EmbeddedSCAccessProvider();
 
 	private Context mContext;
+	// used to get user basic profile data
 	private BasicProfileService profileServce = new BasicProfileService(eu.trentorise.smartcampus.template.Constants.AUTH_URL);
+	// used to access social service 
 	private SocialService socialServce = new SocialService(eu.trentorise.smartcampus.template.Constants.SOCIAL_URL);
 
-	private static BasicProfile profile;
 	private static List<Group> savedGroups;
 
+	// initialize
 	public static void init(Context mContext) {
 		instance = new CMHelper(mContext);
-	}
-
-	public static boolean isInitialized() {
-		return instance != null;
-	}
-	
-	public static void setProfile(BasicProfile profile) {
-		CMHelper.profile = profile;
-	}
-
-	public static BasicProfile getProfile() {
-		return profile;
 	}
 
 	private static CMHelper getInstance() throws Exception {
@@ -73,23 +66,23 @@ public class CMHelper {
 		return instance;
 	}
 
-	public static SCAccessProvider getAccessProvider() {
-		return accessProvider;
-	}
-
 	protected CMHelper(Context mContext) {
 		super();
 		this.mContext = mContext;
 	}
 
 
+	/**
+	 * Load data from server
+	 * @throws Exception
+	 */
 	public static void load() throws Exception {
 		String token = getToken();
-		profile = getInstance().profileServce.getBasicProfile(token);
 		readGroups(token);
 	}
 
 	/**
+	 * Read groups from server
 	 * @param token
 	 * @throws SocialServiceException
 	 * @throws Exception
@@ -101,6 +94,7 @@ public class CMHelper {
 		if (savedGroups == null) {
 			savedGroups = new ArrayList<Group>();
 		}
+		// remove the 'My People' group
 		for (Iterator<Group> iterator = savedGroups.iterator(); iterator.hasNext();) {
 			Group g = iterator.next();
 			if (Constants.MY_PEOPLE_GROUP_ID.endsWith(g.getSocialId())) {
@@ -110,6 +104,7 @@ public class CMHelper {
 	}
 
 	/**
+	 * Read access token
 	 * @return
 	 * @throws AACException
 	 * @throws Exception
@@ -118,13 +113,24 @@ public class CMHelper {
 		return accessProvider.readToken(getInstance().mContext, eu.trentorise.smartcampus.template.Constants.CLIENT_ID, eu.trentorise.smartcampus.template.Constants.CLIENT_SECRET);
 	}
 
-
+	/**
+	 * Search for people
+	 * @param search
+	 * @return
+	 * @throws Exception
+	 */
 	public static List<BasicProfile> getPeople(String search) throws Exception {
 		String token = getToken();
 		List<BasicProfile> users = getInstance().profileServce.getBasicProfiles(search,token);
 		return users;
 	}
 
+	/**
+	 * Save user group
+	 * @param group
+	 * @return
+	 * @throws Exception
+	 */
 	public static Group saveGroup(Group group) throws Exception {
 		Group newGroup = group;
 		String token = getToken();
@@ -137,24 +143,23 @@ public class CMHelper {
 		return newGroup;
 	}
 
+	/**
+	 * delete user group
+	 * @param group
+	 * @throws Exception
+	 */
 	public static void deleteGroup(Group group) throws Exception {
 		String token = getToken();
 		getInstance().socialServce.deleteUserGroup(token, group.getSocialId());
 		readGroups(token);
 	}	
 
-
-	public static void endAppFailure(Activity activity, int id) {
-		Toast.makeText(activity, activity.getResources().getString(id),
-				Toast.LENGTH_LONG).show();
-		activity.finish();
-	}
-
-	public static void showFailure(Activity activity, int id) {
-		Toast.makeText(activity, activity.getResources().getString(id),
-				Toast.LENGTH_LONG).show();
-	}
-
+	/**
+	 * Associate user to groups
+	 * @param user
+	 * @param groups
+	 * @throws Exception
+	 */
 	public static void assignToGroups(User user, Collection<Group> groups) throws Exception {
 		String token = getToken();
 		List<String> userIds = Collections.singletonList(user.getSocialId());
@@ -171,6 +176,9 @@ public class CMHelper {
 		readGroups(token);
 	}
 
+	/**
+	 * @return user groups
+	 */
 	public static List<Group> getGroups() {
 		return savedGroups != null ? savedGroups : Collections.<Group>emptyList();
 	}
@@ -184,7 +192,11 @@ public class CMHelper {
 		}
 		return res;
 	}
-	
+	/**
+	 * Convert {@link BasicProfile} to {@link User} object
+	 * @param bp
+	 * @return
+	 */
 	public static User toUser(BasicProfile bp) {
 		User user = new User();
 		user.setId(bp.getUserId());

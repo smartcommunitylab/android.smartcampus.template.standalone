@@ -33,6 +33,12 @@ import eu.trentorise.smartcampus.social.model.User;
 import eu.trentorise.smartcampus.template.social.custom.data.CMHelper;
 import eu.trentorise.smartcampus.template.social.fragments.groups.MyGroupsAddToDialog;
 
+/**
+ * User list adapter. On associated '...' button click opens a dialog to 
+ * add/remove the user to/from groups.
+ * @author raman
+ *
+ */
 public class UserAdapter extends ArrayAdapter<User> {
 
 	Activity context;
@@ -71,7 +77,13 @@ public class UserAdapter extends ArrayAdapter<User> {
 		}
 
 		holder.user_mp_more
-				.setOnClickListener(new UnknownUserClickListener());
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						final User user = (User) v.getTag();
+						createUserOptionsDialog(user);
+					}
+				});
 		holder.user_mp_more.setText(R.string.user_mp_more_new);
 		holder.user_mp_more.setBackgroundColor(context.getResources()
 				.getColor(R.color.sc_gray));
@@ -89,42 +101,19 @@ public class UserAdapter extends ArrayAdapter<User> {
 		TextView user_mp_surname;
 	}
 
-	class KnownUserClickListener implements OnClickListener {
-		@Override
-		public void onClick(View v) {
-			final User user = (User) v.getTag();
-			
-//			Dialog dialog = new PersonOptionsDialog(context,
-//			// handle remove from 'my people'
-//					new DialogHandler<Void>() {
-//						@Override
-//						public void handleSuccess(Void result) {
-//							handler.handleRemoveFromKnown(user);
-//						}
-//					},
-//					// handle assign to groups
-//					new DialogHandler<Collection<Group>>() {
-//						@Override
-//						public void handleSuccess(Collection<Group> result) {
-//							handler.assignUserToGroups(user, result);
-//						}
-//					}, user);
-			createUserOptionsDialog(user);
-		}
-	}
-
-	class UnknownUserClickListener implements OnClickListener {
-		@Override
-		public void onClick(View v) {
-			final User user = (User) v.getTag();
-			createUserOptionsDialog(user);
-		}
-	}
-
+	/**
+	 * the callback interface upon user-groups association
+	 * @author raman
+	 *
+	 */
 	public interface UserOptionsHandler {
 		void assignUserToGroups(User user, Collection<Group> groups);
 	}
 	
+	/**
+	 * Start {@link MyGroupsAddToDialog} dialog to associate user to groups.
+	 * @param user
+	 */
 	private void createUserOptionsDialog(final User user) {
 		Set<String> groups = CMHelper.getUserGroups(user);
 		if (initGroups != null)  groups.addAll(initGroups);

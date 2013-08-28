@@ -17,7 +17,9 @@ package eu.trentorise.smartcampus.template.social;
 
 public class Constants {
 
+	/** A predefined group that contains all the users that were added to any group */
 	public static final String MY_PEOPLE_GROUP_NAME = "My People";
+	/** the ID of the predefined group that contains all the users that were added to any group */
 	public static final String MY_PEOPLE_GROUP_ID = "-999";
 
 

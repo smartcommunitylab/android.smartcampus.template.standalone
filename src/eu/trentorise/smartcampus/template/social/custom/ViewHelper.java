@@ -19,6 +19,11 @@ import smartcampus.android.template.standalone.R;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * Helper to manage 'empty' list results
+ * @author raman
+ *
+ */
 public class ViewHelper {
 
 	public static void addEmptyListView(LinearLayout parent, int res) {
