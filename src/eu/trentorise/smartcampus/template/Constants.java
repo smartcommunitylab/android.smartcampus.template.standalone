@@ -13,6 +13,6 @@ public class Constants {
 	public static final String HOST = "https://vas-dev.smartcampuslab.it";
 	public static final String AUTH_URL = HOST + "/aac";
 	public static final String SOCIAL_URL = HOST+"/core.social";
-
+	public static final String MOBILITY_SERVICE = HOST+"/core.mobility";
 	public static final String FILESTORAGE_SERVICE = HOST+"/core.filestorage";
 }

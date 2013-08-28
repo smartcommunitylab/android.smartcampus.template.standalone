@@ -31,6 +31,7 @@
     <string name="remote_file_storage_demo_label">Remote file storage demo</string>
     <string name="photo_btn_label">Upload a photo!</string>
     <string name="social_demo_label">Social service demo</string>
+    <string name="mobility_demo_label">Mobility service demo</string>
     
 	<string name="empty" />
     <string name="add">Add</string>
@@ -64,5 +65,12 @@
     <string name="groups_title">Groups</string>
     <string name="campus_title">Campus</string>
 
+    <string name="mobility_plan_from">Start</string>
+    <string name="mobility_plan_to">Destination</string>
+    <string name="mobility_plan_when">Date &amp; time</string>
+    <string name="mobility_plan_preferences">Preferences</string>
+    <string name="mobility_plan_placeholder">Address&#8230;</string>
+    <string name="mobility_plan_search">Search</string>
+    
     <string name="logout">Logout</string>
 </resources>
