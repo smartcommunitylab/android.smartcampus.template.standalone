@@ -67,7 +67,7 @@
 
     <string name="mobility_plan_from">Start</string>
     <string name="mobility_plan_to">Destination</string>
-    <string name="mobility_plan_when">Date &amp; time</string>
+    <string name="mobility_plan_when">Date and time</string>
     <string name="mobility_plan_preferences">Preferences</string>
     <string name="mobility_plan_placeholder">Address&#8230;</string>
     <string name="mobility_plan_search">Search</string>
