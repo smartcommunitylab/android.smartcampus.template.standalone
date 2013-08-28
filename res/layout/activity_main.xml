@@ -22,18 +22,17 @@
     android:layout_margin="3dp">
 
     <TextView
-        android:id="@+id/textView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="@string/tv_data"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/textView2"
+        <TextView
+        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/tv_from_user_account"
+        android:text="@string/tv_from_profile_service"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TableRow
@@ -55,41 +54,7 @@
             android:gravity="right"
             android:layout_height="wrap_content"/>
     </TableRow>
-    
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/tv_from_ac_service"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TableRow
-        android:id="@+id/tableRow2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold|italic"
-            android:text="@string/tv_attributes" />
-
-        <TextView
-            android:id="@+id/attributes"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:layout_height="wrap_content"/>
-    </TableRow>
-
-        <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/tv_from_profile_service"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
+        
     <TableRow
         android:id="@+id/tableRow3"
         android:layout_width="match_parent"
@@ -110,18 +75,16 @@
             android:layout_height="wrap_content"/>
     </TableRow>
 
-        <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/remote_file_storage_demo_label"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-    
     <Button
         android:id="@+id/file_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/remote_file_storage_demo_label" />
+
+    <Button
+        android:id="@+id/social_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/social_demo_label" />
     
 </LinearLayout>

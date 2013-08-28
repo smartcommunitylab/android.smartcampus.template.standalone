@@ -22,6 +22,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
@@ -32,6 +36,7 @@ import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
 import eu.trentorise.smartcampus.profileservice.BasicProfileService;
 import eu.trentorise.smartcampus.profileservice.ProfileServiceException;
 import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
+import eu.trentorise.smartcampus.template.social.SocialActivity;
 
 /**
  * Sample Android activity. Demonstrates also the use of authentication
@@ -67,6 +72,17 @@ public class MainActivity extends Activity {
 					}
 				});
 
+		findViewById(R.id.social_button).setOnClickListener(
+				new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(MainActivity.this,
+								SocialActivity.class);
+						MainActivity.this.startActivity(intent);
+					}
+				});
+
 		// Initialize the access provider
 		mAccessProvider = new EmbeddedSCAccessProvider();
 
@@ -83,29 +99,6 @@ public class MainActivity extends Activity {
 			Log.e(TAG, "Failed to login: " + e.getMessage());
 			// handle the failure, e.g., notify the user and close the app.
 		}
-		// if the authentication is necessary, use the provided operations to
-		// retrieve the token: no restriction on the preferred account type
-		// try {
-		// mToken = mAccessProvider.getAuthToken(this, null);
-		// if (mToken != null) {
-		// // read user data
-		// UserData data = mAccessProvider.readUserData(this, null);
-		// showUserIdFromAccountData(data);
-		// // access the user data from the AC service remotely
-		// new LoadUserDataFromACServiceTask().execute(mToken);
-		// // access the basic user profile data remotely
-		// new LoadUserDataFromProfileServiceTask().execute(mToken);
-		// }
-		// } catch (OperationCanceledException e) {
-		// Log.e(TAG, "Login cancelled.");
-		// finish();
-		// } catch (AuthenticatorException e) {
-		// Log.e(TAG, "Login failed: " + e.getMessage());
-		// finish();
-		// } catch (IOException e) {
-		// Log.e(TAG, "Login ended with error: " + e.getMessage());
-		// finish();
-		// }
 	}
 
 	private void showUserIdFromAccountData(BasicProfile profile) {
@@ -123,19 +116,7 @@ public class MainActivity extends Activity {
 		if (requestCode == SCAccessProvider.SC_AUTH_ACTIVITY_REQUEST_CODE) {
 			// authentication successful
 			if (resultCode == RESULT_OK) {
-				// read the user token
-				// try {
-				// mToken = mAccessProvider.readToken(MainActivity.this,
-				// Constants.CLIENT_ID, Constants.CLIENT_SECRET);
-				// } catch (AACException e) {
-				// Log.e(TAG, "Error retrieving user token", e);
-				// }
-				// mToken = data.getExtras().getString(
-				// AccountManager.KEY_AUTHTOKEN);
 				Log.i(TAG, "Authentication successfull");
-
-				// showUserIdFromAccountData(bp);
-				// new LoadUserDataFromACServiceTask().execute(mToken);
 				new LoadUserDataFromProfileServiceTask().execute();
 				// authentication cancelled by user
 			} else if (resultCode == RESULT_CANCELED) {
@@ -151,45 +132,6 @@ public class MainActivity extends Activity {
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-
-	// protected class LoadUserDataFromACServiceTask extends
-	// AsyncTask<String, Void, UserData> {
-	//
-	// @Override
-	// protected UserData doInBackground(String... params) {
-	// try {
-	// return new ACService(AC_SERVICE_ADDR).getUserByToken(params[0]);
-	// } catch (SecurityException e) {
-	// Log.e(TAG, "Security Exception: " + e.getMessage());
-	// } catch (AcServiceException e) {
-	// Log.e(TAG, "Service Exception: " + e.getMessage());
-	// }
-	// return null;
-	// }
-	//
-	// @Override
-	// protected void onPostExecute(UserData data) {
-	// TextView attrs = (TextView) findViewById(R.id.attributes);
-	// if (data != null) {
-	// StringBuilder builder = new StringBuilder();
-	// if (data.getAttributes() != null) {
-	// for (int i = 0; i < data.getAttributes().size(); i++) {
-	// Attribute a = data.getAttributes().get(i);
-	// builder.append(a.getKey());
-	// builder.append('=');
-	// builder.append(a.getValue());
-	// builder.append('\n');
-	// }
-	// attrs.setText(builder.toString());
-	// } else {
-	// attrs.setText("-");
-	// }
-	// } else {
-	// attrs.setText("UNDEFINED!");
-	// }
-	// showUserIdFromAccountData(data);
-	// }
-	// }
 
 	protected class LoadUserDataFromProfileServiceTask extends
 			AsyncTask<String, Void, BasicProfile> {
@@ -222,6 +164,34 @@ public class MainActivity extends Activity {
 				name.setText("UNDEFINED!");
 			}
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.gripmenu, menu);
+		SubMenu submenu = menu.getItem(0).getSubMenu();
+		submenu.clear();		 
+		submenu.add(Menu.CATEGORY_SYSTEM, R.id.logout, Menu.NONE, R.string.logout);
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.logout:
+			try {
+				mAccessProvider.logout(this);
+			} catch (AACException e) {
+				e.printStackTrace();
+			}
+			finish();
+		default:
+		  return super.onOptionsItemSelected(item);
+		}	
 	}
 
 }
