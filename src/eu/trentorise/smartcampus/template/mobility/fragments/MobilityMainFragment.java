@@ -21,8 +21,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import eu.trentorise.smartcampus.template.custom.LocationHelper;
 import eu.trentorise.smartcampus.template.mobility.MobilityHelper;
-import eu.trentorise.smartcampus.template.mobility.custom.LocationHelper;
 
 public class MobilityMainFragment extends Fragment {
 	private LocationHelper mLocationHelper;
