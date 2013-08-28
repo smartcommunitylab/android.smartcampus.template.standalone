@@ -86,5 +86,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/social_demo_label" />
+    <Button
+        android:id="@+id/territory_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/territory_demo_label" />
     
 </LinearLayout>

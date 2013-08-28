@@ -37,6 +37,7 @@ import eu.trentorise.smartcampus.profileservice.BasicProfileService;
 import eu.trentorise.smartcampus.profileservice.ProfileServiceException;
 import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
 import eu.trentorise.smartcampus.template.social.SocialActivity;
+import eu.trentorise.smartcampus.template.territory.TerritoryActivity;
 
 /**
  * Sample Android activity. Demonstrates also the use of authentication
@@ -79,6 +80,17 @@ public class MainActivity extends Activity {
 					public void onClick(View v) {
 						Intent intent = new Intent(MainActivity.this,
 								SocialActivity.class);
+						MainActivity.this.startActivity(intent);
+					}
+				});
+		
+		findViewById(R.id.territory_button).setOnClickListener(
+				new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(MainActivity.this,
+								TerritoryActivity.class);
 						MainActivity.this.startActivity(intent);
 					}
 				});
