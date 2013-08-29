@@ -4,7 +4,6 @@ import it.sayservice.platform.smartplanner.data.message.Position;
 import it.sayservice.platform.smartplanner.data.message.journey.SingleJourney;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -12,7 +11,7 @@ import java.util.Locale;
 import smartcampus.android.template.standalone.R;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -27,15 +26,34 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import eu.trentorise.smartcampus.template.custom.LocationHelper;
+import eu.trentorise.smartcampus.template.mobility.AddressSelectActivity;
 import eu.trentorise.smartcampus.template.mobility.MobilityHelper;
 
 public class MobilityMainFragment extends Fragment {
+
+	public static final int ADDRESS_SELECT = 1983;
+	public static final String ADDRESS_SELECT_FIELD = "field";
+	public static final String ADDRESS_SELECT_FIELD_FROM = "from";
+	public static final String ADDRESS_SELECT_FIELD_TO = "to";
+	public static final String ADDRESS_SELECT_POINT = "point";
+
 	private LocationHelper mLocationHelper;
 	private Geocoder mGeocoder;
 
 	private Position positionFrom;
 	private Position positionTo;
+
+	private LinearLayout llFromButtons;
+	private LinearLayout llFrom;
+	private TextView tvFromText;
+	private LinearLayout llToButtons;
+	private LinearLayout llTo;
+	private TextView tvToText;
+
 	private EditText tvDate;
 	private EditText tvTime;
 	private Button btnSearch;
@@ -49,19 +67,19 @@ public class MobilityMainFragment extends Fragment {
 	public void onStart() {
 		super.onStart();
 
-		final LinearLayout llFromButtons = (LinearLayout) getView().findViewById(R.id.mobility_ll_from_buttons);
-		final LinearLayout llFrom = (LinearLayout) getView().findViewById(R.id.mobility_ll_from);
+		llFromButtons = (LinearLayout) getView().findViewById(R.id.mobility_ll_from_buttons);
+		llFrom = (LinearLayout) getView().findViewById(R.id.mobility_ll_from);
 		ImageButton btnFromPos = (ImageButton) getView().findViewById(R.id.mobility_btn_from_pos);
 		ImageButton btnFromMap = (ImageButton) getView().findViewById(R.id.mobility_btn_from_map);
 		ImageButton btnFromReset = (ImageButton) getView().findViewById(R.id.mobility_btn_from_reset);
-		final TextView tvFromText = (TextView) getView().findViewById(R.id.mobility_tv_from_text);
+		tvFromText = (TextView) getView().findViewById(R.id.mobility_tv_from_text);
 
-		final LinearLayout llToButtons = (LinearLayout) getView().findViewById(R.id.mobility_ll_to_buttons);
-		final LinearLayout llTo = (LinearLayout) getView().findViewById(R.id.mobility_ll_to);
+		llToButtons = (LinearLayout) getView().findViewById(R.id.mobility_ll_to_buttons);
+		llTo = (LinearLayout) getView().findViewById(R.id.mobility_ll_to);
 		ImageButton btnToPos = (ImageButton) getView().findViewById(R.id.mobility_btn_to_pos);
 		ImageButton btnToMap = (ImageButton) getView().findViewById(R.id.mobility_btn_to_map);
 		ImageButton btnToReset = (ImageButton) getView().findViewById(R.id.mobility_btn_to_reset);
-		final TextView tvToText = (TextView) getView().findViewById(R.id.mobility_tv_to_text);
+		tvToText = (TextView) getView().findViewById(R.id.mobility_tv_to_text);
 
 		tvDate = (EditText) getView().findViewById(R.id.mobility_tv_date);
 		tvTime = (EditText) getView().findViewById(R.id.mobility_tv_time);
@@ -89,6 +107,14 @@ public class MobilityMainFragment extends Fragment {
 		});
 
 		// TODO: select from using the map
+		btnFromMap.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getActivity(), AddressSelectActivity.class);
+				i.putExtra(MobilityMainFragment.ADDRESS_SELECT_FIELD, MobilityMainFragment.ADDRESS_SELECT_FIELD_FROM);
+				startActivityForResult(i, ADDRESS_SELECT);
+			}
+		});
 
 		btnFromReset.setOnClickListener(new OnClickListener() {
 			@Override
@@ -121,6 +147,14 @@ public class MobilityMainFragment extends Fragment {
 		});
 
 		// TODO: select from using the map
+		btnToMap.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getActivity(), AddressSelectActivity.class);
+				i.putExtra(MobilityMainFragment.ADDRESS_SELECT_FIELD, MobilityMainFragment.ADDRESS_SELECT_FIELD_TO);
+				startActivityForResult(i, ADDRESS_SELECT);
+			}
+		});
 
 		btnToReset.setOnClickListener(new OnClickListener() {
 			@Override
@@ -203,6 +237,35 @@ public class MobilityMainFragment extends Fragment {
 		super.onStop();
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (ADDRESS_SELECT == requestCode) {
+			try {
+				if (data.getStringExtra(ADDRESS_SELECT_FIELD_FROM) != null) {
+					positionFrom = point2position((LatLng) data.getParcelableExtra(ADDRESS_SELECT_POINT));
+					if (positionFrom != null) {
+						tvFromText.setText(positionFrom.getName());
+						llFromButtons.setVisibility(View.GONE);
+						llFrom.setVisibility(View.VISIBLE);
+					} else {
+						Toast.makeText(getActivity(), R.string.mobility_plan_wait_location, Toast.LENGTH_SHORT).show();
+					}
+				} else if (data.getStringExtra(ADDRESS_SELECT_FIELD_TO) != null) {
+					positionTo = point2position((LatLng) data.getParcelableExtra(ADDRESS_SELECT_POINT));
+					if (positionTo != null) {
+						tvToText.setText(positionFrom.getName());
+						llToButtons.setVisibility(View.GONE);
+						llTo.setVisibility(View.VISIBLE);
+					} else {
+						Toast.makeText(getActivity(), R.string.mobility_plan_wait_location, Toast.LENGTH_SHORT).show();
+					}
+				}
+			} catch (IOException e) {
+				Log.e("Mobility", e.getMessage());
+			}
+		}
+	}
+
 	private Position location2position() throws IOException {
 		Position position = null;
 
@@ -223,4 +286,25 @@ public class MobilityMainFragment extends Fragment {
 
 		return position;
 	}
+
+	private Position point2position(LatLng point) throws IOException {
+		Position position = null;
+
+		if (point != null) {
+			List<Address> geocodedAddresses = mGeocoder.getFromLocation(point.latitude, point.longitude, 5);
+			Address firstAddress = geocodedAddresses.get(0);
+			String name = "";
+			for (int i = 0; i < firstAddress.getMaxAddressLineIndex(); i++) {
+				name += firstAddress.getAddressLine(i);
+				if ((i + 1) < firstAddress.getMaxAddressLineIndex()) {
+					name += ", ";
+				}
+			}
+			position = new Position(name, null, null, Double.toString(firstAddress.getLatitude()), Double.toString(firstAddress
+					.getLongitude()));
+		}
+
+		return position;
+	}
+
 }
