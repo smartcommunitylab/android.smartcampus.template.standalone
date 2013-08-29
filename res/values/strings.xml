@@ -35,7 +35,6 @@
     
 	<string name="empty" />
     <string name="add">Add</string>
-    <string name="app_name">MyPeople</string>
 
     <string name="user_mp_more">&#8230;</string>
     <string name="user_mp_more_new">+</string>
