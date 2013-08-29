@@ -36,6 +36,7 @@ import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
 import eu.trentorise.smartcampus.profileservice.BasicProfileService;
 import eu.trentorise.smartcampus.profileservice.ProfileServiceException;
 import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
+import eu.trentorise.smartcampus.template.mobility.MobilityActivity;
 import eu.trentorise.smartcampus.template.social.SocialActivity;
 import eu.trentorise.smartcampus.template.territory.TerritoryActivity;
 
@@ -62,16 +63,21 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		findViewById(R.id.file_button).setOnClickListener(
-				new OnClickListener() {
+		findViewById(R.id.file_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, FileActivity.class);
+				MainActivity.this.startActivity(intent);
+			}
+		});
 
-					@Override
-					public void onClick(View v) {
-						Intent intent = new Intent(MainActivity.this,
-								FileActivity.class);
-						MainActivity.this.startActivity(intent);
-					}
-				});
+		findViewById(R.id.social_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, SocialActivity.class);
+				MainActivity.this.startActivity(intent);
+			}
+		});
 
 		findViewById(R.id.social_button).setOnClickListener(
 				new OnClickListener() {
@@ -94,18 +100,24 @@ public class MainActivity extends Activity {
 						MainActivity.this.startActivity(intent);
 					}
 				});
+		
+		findViewById(R.id.mobility_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, MobilityActivity.class);
+				MainActivity.this.startActivity(intent);
+			}
+		});
 
 		// Initialize the access provider
 		mAccessProvider = new EmbeddedSCAccessProvider();
 
 		try {
-			if (!mAccessProvider.login(this, Constants.CLIENT_ID,
-					Constants.CLIENT_SECRET, null)) {
+			if (!mAccessProvider.login(this, Constants.CLIENT_ID, Constants.CLIENT_SECRET, null)) {
 				// user is already registered. Proceed requesting the token
 				// and the related steps if needed
 				new LoadUserDataFromProfileServiceTask().execute();
 				Log.i(TAG, "Already authenticated");
-
 			}
 		} catch (AACException e) {
 			Log.e(TAG, "Failed to login: " + e.getMessage());
@@ -136,8 +148,7 @@ public class MainActivity extends Activity {
 				Log.i(TAG, "Authentication cancelled");
 				// authentication failed
 			} else {
-				String error = data.getExtras().getString(
-						AccountManager.KEY_AUTH_FAILED_MESSAGE);
+				String error = data.getExtras().getString(AccountManager.KEY_AUTH_FAILED_MESSAGE);
 				Toast.makeText(this, error, Toast.LENGTH_LONG).show();
 				Log.i(TAG, "Authentication failed: " + error);
 			}
@@ -145,16 +156,13 @@ public class MainActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	protected class LoadUserDataFromProfileServiceTask extends
-			AsyncTask<String, Void, BasicProfile> {
+	protected class LoadUserDataFromProfileServiceTask extends AsyncTask<String, Void, BasicProfile> {
 
 		@Override
 		protected BasicProfile doInBackground(String... params) {
 			try {
-				String mToken = mAccessProvider.readToken(MainActivity.this,
-						Constants.CLIENT_ID, Constants.CLIENT_SECRET);
-				BasicProfileService service = new BasicProfileService(
-						Constants.AUTH_URL);
+				String mToken = mAccessProvider.readToken(MainActivity.this, Constants.CLIENT_ID, Constants.CLIENT_SECRET);
+				BasicProfileService service = new BasicProfileService(Constants.AUTH_URL);
 				return service.getBasicProfile(mToken);
 			} catch (SecurityException e) {
 				Log.e(TAG, "Security Exception: " + e.getMessage());
@@ -183,12 +191,14 @@ public class MainActivity extends Activity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.gripmenu, menu);
 		SubMenu submenu = menu.getItem(0).getSubMenu();
-		submenu.clear();		 
+		submenu.clear();
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.logout, Menu.NONE, R.string.logout);
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
 	 */
 	@Override
@@ -202,8 +212,8 @@ public class MainActivity extends Activity {
 			}
 			finish();
 		default:
-		  return super.onOptionsItemSelected(item);
-		}	
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 }

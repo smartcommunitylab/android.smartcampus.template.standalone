@@ -36,6 +36,11 @@ import eu.trentorise.smartcampus.template.social.custom.CheckListAdapter.CheckLi
 import eu.trentorise.smartcampus.template.social.custom.DialogHandler;
 import eu.trentorise.smartcampus.template.social.custom.data.CMHelper;
 
+/**
+ * Dialog for associating a user to the current user's groups
+ * @author raman
+ *
+ */
 public class MyGroupsAddToDialog extends Dialog {
 
 	private DialogHandler<Collection<Group>> groupAssignmentHandler = null;

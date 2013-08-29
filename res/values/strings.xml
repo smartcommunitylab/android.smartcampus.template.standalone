@@ -32,6 +32,8 @@
     <string name="photo_btn_label">Upload a photo!</string>
     <string name="social_demo_label">Social service demo</string>
     <string name="territory_demo_label">Territory service demo</string>
+    <string name="mobility_demo_label">Mobility service demo</string>
+    
 	<string name="empty" />
     <string name="add">Add</string>
     <string name="app_name">MyPeople</string>
@@ -64,6 +66,13 @@
     <string name="groups_title">Groups</string>
     <string name="campus_title">Campus</string>
 
+    <string name="mobility_plan_from">Start</string>
+    <string name="mobility_plan_to">Destination</string>
+    <string name="mobility_plan_when">Date and time</string>
+    <string name="mobility_plan_preferences">Preferences</string>
+    <string name="mobility_plan_placeholder">Address&#8230;</string>
+    <string name="mobility_plan_search">Search</string>
+    
     <string name="logout">Logout</string>
     
 <!--     territory string -->

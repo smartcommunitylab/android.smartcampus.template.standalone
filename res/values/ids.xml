@@ -23,4 +23,5 @@
     <item name="mygroups_rename" type="id"/>    
     <item name="logout" type="id"/>    
     <item name="content_empty" type="id"/>
+    <item name="menu_item_show_events_layers" type="id"/>
 </resources>
