@@ -36,7 +36,6 @@
     
 	<string name="empty" />
     <string name="add">Add</string>
-    <string name="app_name">MyPeople</string>
 
     <string name="user_mp_more">&#8230;</string>
     <string name="user_mp_more_new">+</string>
@@ -72,6 +71,7 @@
     <string name="mobility_plan_preferences">Preferences</string>
     <string name="mobility_plan_placeholder">Address&#8230;</string>
     <string name="mobility_plan_search">Search</string>
+    <string name="mobility_plan_wait_location">Location not found yet. Try again in a while&#8230;</string>
     
     <string name="logout">Logout</string>
     
