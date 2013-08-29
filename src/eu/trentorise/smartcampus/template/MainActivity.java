@@ -15,6 +15,9 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.template;
 
+import eu.trentorise.smartcampus.template.mobility.MobilityActivity;
+import eu.trentorise.smartcampus.template.social.SocialActivity;
+import eu.trentorise.smartcampus.template.territory.TerritoryActivity;
 import smartcampus.android.template.standalone.R;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -36,9 +39,6 @@ import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
 import eu.trentorise.smartcampus.profileservice.BasicProfileService;
 import eu.trentorise.smartcampus.profileservice.ProfileServiceException;
 import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
-import eu.trentorise.smartcampus.template.mobility.MobilityActivity;
-import eu.trentorise.smartcampus.template.social.SocialActivity;
-import eu.trentorise.smartcampus.template.territory.TerritoryActivity;
 
 /**
  * Sample Android activity. Demonstrates also the use of authentication

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.template.social.custom;
 
+import eu.trentorise.smartcampus.template.social.fragments.campus.CampusFragmentPeople;
+import eu.trentorise.smartcampus.template.social.fragments.groups.MyGroupsFragment;
 import smartcampus.android.template.standalone.R;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -26,8 +28,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.template.social.fragments.campus.CampusFragmentPeople;
-import eu.trentorise.smartcampus.template.social.fragments.groups.MyGroupsFragment;
 
 /**
  * Adapter for landing page for social demo fragment

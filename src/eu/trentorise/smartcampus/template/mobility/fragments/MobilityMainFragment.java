@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import eu.trentorise.smartcampus.template.custom.LocationHelper;
+import eu.trentorise.smartcampus.template.mobility.MobilityHelper;
 import smartcampus.android.template.standalone.R;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -27,8 +29,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import eu.trentorise.smartcampus.template.custom.LocationHelper;
-import eu.trentorise.smartcampus.template.mobility.MobilityHelper;
 
 public class MobilityMainFragment extends Fragment {
 	private LocationHelper mLocationHelper;

@@ -32,8 +32,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.social.model.Group;
 import eu.trentorise.smartcampus.template.social.custom.CheckListAdapter;
-import eu.trentorise.smartcampus.template.social.custom.CheckListAdapter.CheckListItem;
 import eu.trentorise.smartcampus.template.social.custom.DialogHandler;
+import eu.trentorise.smartcampus.template.social.custom.CheckListAdapter.CheckListItem;
 import eu.trentorise.smartcampus.template.social.custom.data.CMHelper;
 
 /**

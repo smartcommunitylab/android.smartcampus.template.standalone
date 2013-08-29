@@ -18,6 +18,7 @@ package eu.trentorise.smartcampus.template;
 import java.io.ByteArrayOutputStream;
 
 import smartcampus.android.template.standalone.R;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
