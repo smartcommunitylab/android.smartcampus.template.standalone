@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2012-2013 Trento RISE
+  
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+         http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="smartcampus.android.template.standalone"
+    android:versionCode="1"
+   android:versionName="1.0" >
+ 
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="18" />
+
+   <!-- Google Maps related permissions -->
+<permission android:name="com.ecs.google.maps.v2.actionbarsherlock.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
+<uses-permission android:name="com.example.mapdemo.permission.MAPS_RECEIVE"/>
+ 
+<!-- Network connectivity permissions -->
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+<uses-permission android:name="android.permission.INTERNET"/>
+ 
+<!-- Access Google based webservices -->
+<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+ 
+<!-- External storage for caching. -->
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+<!-- My Location -->
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Maps API needs OpenGL ES 2.0. -->
+<uses-feature android:glEsVersion="0x00020000" android:required="true"/>   
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAYMob8Ipl_ykdVq9hkQTvFVSQMNSXn3aA"/>
+        
+        <!-- the Activity class that perform the authentication/authorization -->
+        <activity android:name="eu.trentorise.smartcampus.ac.embedded.EmbeddedAuthActivity" />
+        <activity
+            android:name="eu.trentorise.smartcampus.template.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="eu.trentorise.smartcampus.template.FileActivity"
+            android:label="@string/title_activity_file" >
+        </activity>
+        <activity
+            android:name="eu.trentorise.smartcampus.storage.AuthActivity"
+            android:configChanges="orientation|keyboard" >
+        </activity>
+        <activity
+            android:name="eu.trentorise.smartcampus.template.social.SocialActivity"
+            android:configChanges="orientation|keyboard" />
+        <activity
+            android:name="eu.trentorise.smartcampus.template.mobility.MobilityActivity"
+            android:configChanges="orientation|keyboard" />
+        <activity
+            android:name="eu.trentorise.smartcampus.template.territory.TerritoryActivity"
+            android:configChanges="orientation|keyboard" />
+    </application>
+
+</manifest>

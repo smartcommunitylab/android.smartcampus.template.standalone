@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.template.social.fragments;
 
+import eu.trentorise.smartcampus.template.social.custom.MainAdapter;
 import smartcampus.android.template.standalone.R;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -23,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import eu.trentorise.smartcampus.template.social.custom.MainAdapter;
 
 /**
  * Landing page fragment

@@ -56,7 +56,7 @@ public class TerritoryActivity extends Activity {
 		 FragmentManager fragmentManager = getFragmentManager();
 	        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 	        MainFragment fragment = new MainFragment();
-	        fragmentTransaction.add(R.id.mainlayout, fragment);
+	        fragmentTransaction.add(android.R.id.content, fragment);
 	        fragmentTransaction.commit();
 
 
