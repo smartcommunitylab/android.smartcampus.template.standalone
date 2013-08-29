@@ -4,12 +4,15 @@ import it.sayservice.platform.smartplanner.data.message.Position;
 import it.sayservice.platform.smartplanner.data.message.journey.SingleJourney;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import smartcampus.android.template.standalone.R;
+import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.TimePickerDialog;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -19,6 +22,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,8 +36,8 @@ public class MobilityMainFragment extends Fragment {
 
 	private Position positionFrom;
 	private Position positionTo;
-	private TextView tvDate;
-	private TextView tvTime;
+	private EditText tvDate;
+	private EditText tvTime;
 	private Button btnSearch;
 
 	@Override
@@ -59,8 +63,8 @@ public class MobilityMainFragment extends Fragment {
 		ImageButton btnToReset = (ImageButton) getView().findViewById(R.id.mobility_btn_to_reset);
 		final TextView tvToText = (TextView) getView().findViewById(R.id.mobility_tv_to_text);
 
-		tvDate = (TextView) getView().findViewById(R.id.mobility_tv_date);
-		tvTime = (TextView) getView().findViewById(R.id.mobility_tv_time);
+		tvDate = (EditText) getView().findViewById(R.id.mobility_tv_date);
+		tvTime = (EditText) getView().findViewById(R.id.mobility_tv_time);
 		btnSearch = (Button) getView().findViewById(R.id.mobility_btn_search);
 
 		/*
@@ -124,6 +128,31 @@ public class MobilityMainFragment extends Fragment {
 				tvToText.setText("");
 				llTo.setVisibility(View.GONE);
 				llToButtons.setVisibility(View.VISIBLE);
+			}
+		});
+
+		/*
+		 * DATE AND TIME
+		 */
+		Date now = new Date(System.currentTimeMillis());
+		tvDate.setTag(now);
+		tvDate.setText(MobilityHelper.FORMAT_DATE_UI.format(now));
+		tvTime.setTag(now);
+		tvTime.setText(MobilityHelper.FORMAT_TIME_UI.format(now));
+
+		tvDate.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DialogFragment datePickerDialogFragment = DatePickerDialogFragment.newInstance(tvDate);
+				datePickerDialogFragment.show(getFragmentManager(), "datePicker");
+			}
+		});
+
+		tvTime.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DialogFragment timePickerDialogFragment = TimePickerDialogFragment.newInstance(tvTime);
+				timePickerDialogFragment.show(getFragmentManager(), "timePicker");
 			}
 		});
 
