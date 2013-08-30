@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package eu.trentorise.smartcampus.template.territory.fragment.map;
+package eu.trentorise.smartcampus.template.territory.fragment.map.interfaces;
 
 import java.util.Collection;
 import java.util.List;

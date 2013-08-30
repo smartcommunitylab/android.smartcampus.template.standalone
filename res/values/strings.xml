@@ -76,14 +76,6 @@
     <string name="logout">Logout</string>
     
 <!--     territory string -->
-    <string name="categories_event_today">Today\'s Events</string>
-	<string name="categories_event_concert">Concerts</string>
-	<string name="categories_event_happyhour">Happy hours</string>
-	<string name="categories_event_movie">Movies</string>
-	<string name="categories_event_party">Parties</string>
-	<string name="categories_event_seminar">Seminars</string>
-	<string name="categories_event_theater">Performances</string>
-	<string name="categories_event_exhibition">Exhibitions</string>
-	<string name="categories_event_family">Family</string>	
+
 	<string name="categories_event_generic">Other</string>
 </resources>

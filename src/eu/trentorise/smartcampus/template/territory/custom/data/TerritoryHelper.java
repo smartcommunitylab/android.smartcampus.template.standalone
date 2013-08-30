@@ -22,19 +22,21 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import smartcampus.android.template.standalone.R;
-
+/*
+ * This Helper is used for get the categories resource and other operations*/
 public class TerritoryHelper {
 	private final static String TAG = "CategoryHelper";
 	public static final String CATEGORY_TYPE_EVENTS = "events";
 	public static final String CATEGORY_TODAY = "Today";
 
+	/*Categories operations*/
 	/*
 	 * just one generic category could be extend with new categories
 	 */
 	public static CategoryDescriptor[] EVENT_CATEGORIES = new CategoryDescriptor[] {
 
-	new CategoryDescriptor(R.drawable.ic_marker_e_generic, R.drawable.ic_e_other, "Generic",
-			R.string.categories_event_concert) };
+	new CategoryDescriptor(R.drawable.ic_marker_e_generic,  "Generic",
+			R.string.categories_event_generic) };
 	private static Map<String, String> categoryMapping = new HashMap<String, String>();
 	private static Map<String, CategoryDescriptor> descriptorMap = new LinkedHashMap<String, CategoryDescriptor>();
 
@@ -44,7 +46,6 @@ public class TerritoryHelper {
 		}
 
 	}
-
 	public static int getMapIconByType(String type) {
 		if (categoryMapping.containsKey(type))
 			return descriptorMap.get(categoryMapping.get(type)).map_icon;
@@ -63,6 +64,8 @@ public class TerritoryHelper {
 		return res;
 	}
 
+	/*Date operations*/
+	
 	public static Long getTodayMorning() {
 		Calendar date = new GregorianCalendar();
 

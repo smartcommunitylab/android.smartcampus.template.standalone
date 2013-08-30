@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2012-2013 Trento RISE
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either   express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 package eu.trentorise.smartcampus.template.territory.fragment.map;
 
 import java.util.ArrayList;
@@ -33,11 +48,15 @@ import eu.trentorise.smartcampus.template.territory.custom.data.CategoryDescript
 import eu.trentorise.smartcampus.template.territory.custom.data.TerritoryHelper;
 import eu.trentorise.smartcampus.template.territory.fragment.InfoDialogMultiEvent;
 import eu.trentorise.smartcampus.template.territory.fragment.InfoDialogSingleEvent;
+import eu.trentorise.smartcampus.template.territory.fragment.map.interfaces.MapItemsHandler;
+import eu.trentorise.smartcampus.template.territory.fragment.map.interfaces.MapObjectContainer;
 import eu.trentorise.smartcampus.territoryservice.TerritoryService;
 import eu.trentorise.smartcampus.territoryservice.model.BaseDTObject;
 import eu.trentorise.smartcampus.territoryservice.model.EventObject;
 import eu.trentorise.smartcampus.territoryservice.model.ObjectFilter;
 
+/*This is the main fragment manages the events: their receipt from the server,
+ *  their addition on the map */
 public class MainFragment extends MapFragment implements MapItemsHandler, OnCameraChangeListener,
 		OnMarkerClickListener, MapObjectContainer {
 
@@ -49,9 +68,9 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 	private String[] eventsCategories = null;
 	private Collection<? extends BaseDTObject> objects;
 
-
-
-
+	/*
+	 * initialize all the possible categories
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,6 +85,9 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 
 	}
 
+	/*
+	 * inflate the layout
+	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
@@ -81,44 +103,25 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		}
 		return view;
 	}
+
 	@Override
 	public void onStart() {
 		super.onStart();
 		initView();
 	}
-	
-	@SuppressWarnings("unchecked")
+
+	/*
+	 * Get and load the data
+	 */
 	protected void initView() {
 		if (getSupportMap() != null) {
 			getSupportMap().clear();
 			getSupportMap().getUiSettings().setRotateGesturesEnabled(false);
 			getSupportMap().getUiSettings().setTiltGesturesEnabled(false);
 		}
-
-		if (getArguments() != null && getArguments().containsKey(ARG_OBJECTS)) {
-			eventsCategories = null;
-			List<BaseDTObject> list = (List<BaseDTObject>) getArguments().getSerializable(ARG_OBJECTS);
-			new AsyncTask<List<BaseDTObject>, Void, List<BaseDTObject>>() {
-				@Override
-				protected List<BaseDTObject> doInBackground(List<BaseDTObject>... params) {
-					return params[0];
-				}
-
-				@Override
-				protected void onPostExecute(List<BaseDTObject> result) {
-					addObjects(result);
-				}
-			}.execute(list);
-		}
-
-		else if (getArguments() != null && getArguments().containsKey(ARG_EVENT_CATEGORY)) {
-			setEventCategoriesToLoad(getArguments().getString(ARG_EVENT_CATEGORY));
-		}
-
-		if (eventsCategories != null) {
-			setEventCategoriesToLoad(eventsCategories);
-		}
+		setEventCategoriesToLoad(eventsCategories);
 	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -129,7 +132,6 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 
 		}
 	}
-
 
 	@Override
 	public void onPause() {
@@ -161,6 +163,9 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 
 	}
 
+	/*
+	 * Run the AsyncTask that get the day's events
+	 */
 	@Override
 	public void setEventCategoriesToLoad(final String... categories) {
 		this.eventsCategories = categories;
@@ -180,6 +185,11 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		return mMap;
 	}
 
+	/*
+	 * What happens when you click on a marker? If it's a single event open the
+	 * InfoDialogSingleEvent with its details, if they are many events zoom in
+	 * until it's possible else open the InfoDialogMultiEvent
+	 */
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		List<BaseDTObject> list = MapManager.ClusteringHelper.getFromGridId(marker.getTitle());
@@ -222,6 +232,11 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 
 	}
 
+	/*
+	 * The AsyncTask that get the day's events. In the doInBackground, it's
+	 * instantiated the TerritoryService and the filter. Using the service, the
+	 * data are received and in the onPostExecute added to the map
+	 */
 	private class MapLoadProcessor extends AsyncTask<Void, Void, Collection<? extends BaseDTObject>> {
 
 		@Override

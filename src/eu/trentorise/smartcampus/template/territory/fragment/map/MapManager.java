@@ -15,6 +15,10 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.template.territory.fragment.map;
 
+/*
+ * This class manages the map, the zoom when the user click on a flag,
+ *  the clustering and so on
+ *  */
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -61,7 +65,7 @@ public class MapManager {
 	public static LatLng DEFAULT_POINT = new LatLng(46.0696727540531, 11.1212700605392); // Trento
 
 	public static void initWithParam() {
-		int zoom = ZOOM_DEFAULT ;
+		int zoom = ZOOM_DEFAULT;
 	}
 
 	public static MapView getMapView() {
@@ -73,8 +77,6 @@ public class MapManager {
 		MapManager.mapView.setClickable(true);
 		MapManager.mapView.setBuiltInZoomControls(true);
 	}
-
-
 
 	public static void fitMapWithOverlays(Collection<? extends BaseDTObject> objects, GoogleMap map) {
 		double[] ll = null, rr = null;
@@ -103,8 +105,6 @@ public class MapManager {
 			map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 64));
 		}
 	}
-
-
 
 	/*
 	 * CLUSTERING
@@ -225,7 +225,6 @@ public class MapManager {
 
 			int markerIcon = TerritoryHelper.getMapIconByType(item.getType());
 
-
 			MarkerOptions marker = new MarkerOptions().position(latLng)
 					.icon(BitmapDescriptorFactory.fromResource(markerIcon)).title(x + ":" + y);
 			return marker;
@@ -282,7 +281,6 @@ public class MapManager {
 
 	}
 
-
 	private static Bitmap writeOnMarker(Context mContext, int drawableId, String text) {
 		float scale = mContext.getResources().getDisplayMetrics().density;
 
@@ -304,7 +302,6 @@ public class MapManager {
 
 		return bitmap;
 	}
-
 
 	private static LatLng getLatLngFromBasicObject(BaseDTObject object) {
 		LatLng latLng = null;

@@ -29,42 +29,51 @@ import android.widget.TextView;
 import eu.trentorise.smartcampus.territoryservice.model.BaseDTObject;
 import eu.trentorise.smartcampus.territoryservice.model.EventObject;
 
-
+/*
+ * This dialog is shown when the user click on a flag with more than one events. 
+ * The events' list (data) is scrollable and picking one of these, the event's 
+ * details is shown in a new fragment (InfoDialogSingleEvent). 
+ * */
 
 public class InfoDialogSingleEvent extends DialogFragment {
 	private BaseDTObject data;
+	private static final String PARAM = "event";
 
-	public InfoDialogSingleEvent() {
+	/*
+	 * when the fragment is created, the event is taken and passed in the Bundle
+	 * as parameter
+	 */
+
+	public static final InfoDialogSingleEvent newInstance(BaseDTObject o) {
+		InfoDialogSingleEvent fragment = new InfoDialogSingleEvent();
+		Bundle bundle = new Bundle();
+		bundle.putSerializable(PARAM, o);
+		fragment.setArguments(bundle);
+		return fragment;
 	}
 
+	/* Before the start, the fragment get the data send by param */
 
-
-	public static final InfoDialogSingleEvent newInstance( BaseDTObject o)
-	 {
-		InfoDialogSingleEvent fragment = new InfoDialogSingleEvent();
-	     Bundle bundle = new Bundle();   
-	     bundle.putSerializable("BaseDTOObject", o);
-	     fragment.setArguments(bundle);
-	     return fragment ;
-	 }
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-			if (data instanceof EventObject) {
+		if (data instanceof EventObject) {
 			getDialog().setTitle("Event");
 		}
-		data = (BaseDTObject) getArguments().getSerializable("BaseDTOObject");
+		data = (BaseDTObject) getArguments().getSerializable(PARAM);
 		return inflater.inflate(R.layout.mapdialogsingle, container, false);
 	}
 
+	/*
+	 * When the fragment start, the detail's event is created using html and
+	 * shown in the DialogFragment
+	 */
 	@Override
 	public void onStart() {
 		super.onStart();
 		TextView msg = (TextView) getDialog().findViewById(R.id.mapdialog_msg);
 		getDialog().setTitle("Event Detail");
 
-
-			if (data instanceof EventObject) {
+		if (data instanceof EventObject) {
 			EventObject event = (EventObject) data;
 			String msgText = "";
 			msgText += "<h2>";
@@ -89,7 +98,6 @@ public class InfoDialogSingleEvent extends DialogFragment {
 				getDialog().dismiss();
 			}
 		});
-
 
 	}
 }
