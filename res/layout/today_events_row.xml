@@ -16,10 +16,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:maxLines="2"
             android:ellipsize="marquee"
             android:gravity="center_vertical"
+            android:maxLines="2"
+            android:paddingBottom="8dip"
             android:paddingLeft="12dip"
+            android:paddingTop="8dip"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
