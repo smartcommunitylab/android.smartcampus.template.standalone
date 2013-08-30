@@ -183,6 +183,35 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- PREFERENCES -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/mobility_tv_prefs_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/mobility_plan_preferences"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TableLayout
+            android:id="@+id/transporttypes_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </TableLayout>
+
+        <RadioGroup
+            android:id="@+id/routetypes_radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </RadioGroup>
+    </LinearLayout>
+
     <Button
         android:id="@+id/mobility_btn_search"
         android:layout_width="match_parent"

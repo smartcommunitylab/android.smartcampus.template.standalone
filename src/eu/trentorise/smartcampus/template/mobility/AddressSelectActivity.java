@@ -17,11 +17,15 @@ package eu.trentorise.smartcampus.template.mobility;
 
 import smartcampus.android.template.standalone.R;
 import android.app.Activity;
+import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Vibrator;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -30,6 +34,8 @@ import eu.trentorise.smartcampus.template.mobility.fragments.MobilityMainFragmen
 public class AddressSelectActivity extends Activity implements OnMapLongClickListener {
 
 	private GoogleMap mMap = null;
+	private Location myLocation = null;
+	private LatLng mPoint;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,16 +51,16 @@ public class AddressSelectActivity extends Activity implements OnMapLongClickLis
 		mMap.setOnMapLongClickListener(this);
 		mMap.setMyLocationEnabled(true);
 
-		// if (JPHelper.getLocationHelper().getLocation() != null) {
-		// LatLng centerLatLng = new
-		// LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6() /
-		// 1e6,
-		// JPHelper.getLocationHelper().getLocation().getLongitudeE6() / 1e6);
-		// mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng,
-		// JPParamsHelper.getZoomLevelMap()));
-		// } else {
-		// mMap.moveCamera(CameraUpdateFactory.zoomTo(JPParamsHelper.getZoomLevelMap()));
-		// }
+		mMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener() {
+			@Override
+			public void onMyLocationChange(Location location) {
+				if (myLocation == null) {
+					myLocation = location;
+					mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+							new LatLng(location.getLatitude(), location.getLongitude()), 15));
+				}
+			}
+		});
 
 		// Toast.makeText(this, R.string.address_select_toast,
 		// Toast.LENGTH_LONG).show();
@@ -64,9 +70,19 @@ public class AddressSelectActivity extends Activity implements OnMapLongClickLis
 	public void onMapLongClick(LatLng point) {
 		Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 		vibrator.vibrate(100);
-
-		getIntent().putExtra(MobilityMainFragment.ADDRESS_SELECT_POINT, point);
+		mPoint = point;
 		finish();
 	}
 
+	@Override
+	public void finish() {
+		if (mPoint != null) {
+			Intent data = new Intent();
+			data.putExtra(MobilityMainFragment.ADDRESS_SELECT_FIELD,
+					getIntent().getStringExtra(MobilityMainFragment.ADDRESS_SELECT_FIELD));
+			data.putExtra(MobilityMainFragment.ADDRESS_SELECT_POINT, mPoint);
+			setResult(RESULT_OK, data);
+		}
+		super.finish();
+	}
 }
