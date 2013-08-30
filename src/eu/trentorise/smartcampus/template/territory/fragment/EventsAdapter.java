@@ -60,7 +60,6 @@ public class EventsAdapter extends BaseAdapter {
 	public class ViewHolder {
 		RelativeLayout lsummary_row;
 		TextView events_name;
-		CheckBox chkinterest;
 	}
 
 	@Override
@@ -78,14 +77,6 @@ public class EventsAdapter extends BaseAdapter {
 		if (context.getResources().getString(R.string.categories_event_today).equals(eventDescription.get(pos))) {
 			holder.events_name.setTextAppearance(context, R.style.today_events);
 		}
-		holder.chkinterest.setChecked(checked[position]);
-		holder.chkinterest.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				addtoarray.addtoarray(isChecked, position);
-				checked[position] = isChecked;
-			}
-		});
 
 		return convertView;
 	}

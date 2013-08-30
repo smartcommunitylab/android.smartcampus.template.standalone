@@ -1,6 +1,5 @@
-package eu.trentorise.smartcampus.template.territory.fragment;
+package eu.trentorise.smartcampus.template.territory.fragment.map;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -10,19 +9,13 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import smartcampus.android.template.standalone.R;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,8 +29,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
 import eu.trentorise.smartcampus.template.Constants;
+import eu.trentorise.smartcampus.template.territory.custom.data.CategoryDescriptor;
 import eu.trentorise.smartcampus.template.territory.custom.data.TerritoryHelper;
-import eu.trentorise.smartcampus.template.territory.custom.data.TerritoryHelper.CategoryDescriptor;
+import eu.trentorise.smartcampus.template.territory.fragment.InfoDialogMultiEvent;
+import eu.trentorise.smartcampus.template.territory.fragment.InfoDialogSingleEvent;
 import eu.trentorise.smartcampus.territoryservice.TerritoryService;
 import eu.trentorise.smartcampus.territoryservice.model.BaseDTObject;
 import eu.trentorise.smartcampus.territoryservice.model.EventObject;
@@ -52,17 +47,23 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 	protected GoogleMap mMap;
 	private static View view;
 	private String[] eventsCategories = null;
-	private String[] eventsNotTodayCategories = null;
 	private Collection<? extends BaseDTObject> objects;
 
-	@Override
-	public void onStart() {
-		super.onStart();
-		// hide keyboard if it is still open
-		InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(getActivity().findViewById(android.R.id.content).getWindowToken(), 0);
 
-		initView();
+
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		CategoryDescriptor[] eventsDefault = TerritoryHelper.getEventCategoryDescriptors();
+		if (eventsDefault != null) {
+			List<String> eventCategory = new ArrayList<String>();
+			for (CategoryDescriptor event : eventsDefault)
+				eventCategory.add(event.category);
+			eventsCategories = Arrays.asList(eventCategory.toArray()).toArray(
+					new String[eventCategory.toArray().length]);
+		}
+
 	}
 
 	@Override
@@ -80,24 +81,12 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		}
 		return view;
 	}
-
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		CategoryDescriptor[] eventsDefault = TerritoryHelper.getEventCategoryDescriptors();
-		if (eventsDefault != null) {
-			List<String> eventCategory = new ArrayList<String>();
-			for (CategoryDescriptor event : eventsDefault)
-				eventCategory.add(event.category);
-			eventsCategories = Arrays.asList(eventCategory.toArray()).toArray(
-					new String[eventCategory.toArray().length]);
-		}
-
+	public void onStart() {
+		super.onStart();
+		initView();
 	}
-
-	/**
-	 * @return
-	 */
+	
 	@SuppressWarnings("unchecked")
 	protected void initView() {
 		if (getSupportMap() != null) {
@@ -130,7 +119,6 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 			setEventCategoriesToLoad(eventsCategories);
 		}
 	}
-
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -142,10 +130,6 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		}
 	}
 
-	@Override
-	public void onConfigurationChanged(Configuration arg0) {
-		super.onConfigurationChanged(arg0);
-	}
 
 	@Override
 	public void onPause() {
@@ -158,26 +142,8 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 	}
 
 	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
-
-		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_show_events_layers, 1, "Events");
-		item.setIcon(R.drawable.ic_menu_events);
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		if (item.getItemId() == R.id.menu_item_show_events_layers) {
-			Dialog eventsDialog = MapLayerDialogHelper.createEventsDialog(getActivity(), this, "Events",
-					eventsCategories);
-			eventsDialog.show();
-			return true;
-		} else {
-			return super.onOptionsItemSelected(item);
-		}
+	public void onConfigurationChanged(Configuration arg0) {
+		super.onConfigurationChanged(arg0);
 	}
 
 	private void onBaseDTObjectTap(BaseDTObject o) {
@@ -190,35 +156,16 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		if (list.size() == 1) {
 			onBaseDTObjectTap(list.get(0));
 			return;
-		}
-		else new InfoDialogMultiEvent().newInstance(list,getActivity()).show(getActivity().getFragmentManager(), "me");
+		} else
+			new InfoDialogMultiEvent().newInstance(list, getActivity()).show(getActivity().getFragmentManager(), "me");
 
 	}
 
 	@Override
 	public void setEventCategoriesToLoad(final String... categories) {
 		this.eventsCategories = categories;
-		this.eventsNotTodayCategories = categories;
-
-		/* actually only event or poi at the same time */
 		new MapLoadProcessor().execute();
 
-	}
-
-	private boolean isTodayIncluded() {
-		List<String> categoriesNotToday = new ArrayList<String>();
-		boolean istodayincluded = false;
-		if (eventsCategories.length > 0)
-			for (int i = 0; i < eventsCategories.length; i++) {
-				if (eventsCategories[i].contains("Today")) {
-
-					istodayincluded = true;
-				} else
-					categoriesNotToday.add(eventsCategories[i]);
-
-			}
-		eventsNotTodayCategories = categoriesNotToday.toArray(new String[categoriesNotToday.size()]);
-		return istodayincluded;
 	}
 
 	private GoogleMap getSupportMap() {
@@ -286,23 +233,11 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		protected Collection<? extends BaseDTObject> doInBackground(Void... params) {
 			TerritoryService service = new TerritoryService("https://vas-dev.smartcampuslab.it/core.territory");
 			ObjectFilter filter = new ObjectFilter();
-//			// today    
-			Calendar date = new GregorianCalendar();
-//			// reset hour, minutes, seconds and millis
-			date.set(Calendar.HOUR_OF_DAY, 0);
-			date.set(Calendar.MINUTE, 0);
-			date.set(Calendar.SECOND, 0);
-			date.set(Calendar.MILLISECOND, 0);
-			filter.setFromTime(date.getTimeInMillis());
 
-			// next day
-			date.set(Calendar.HOUR_OF_DAY, 23);
-			date.set(Calendar.MINUTE, 59);
-			date.set(Calendar.SECOND, 59);
-			date.set(Calendar.MILLISECOND, 999);
-			filter.setToTime(date.getTimeInMillis());
-//			filter.setFromTime(date.getTimeInMillis());
-//			filter.setToTime(null);
+			filter.setFromTime(TerritoryHelper.getTodayMorning());
+
+			filter.setFromTime(TerritoryHelper.getTodayEvening());
+
 			try {
 				SCAccessProvider mAccessProvider = new EmbeddedSCAccessProvider();
 				List<EventObject> events = service.getEvents(filter,
@@ -317,11 +252,7 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		@Override
 		protected void onPostExecute(Collection<? extends BaseDTObject> result) {
 			super.onPostExecute(result);
-			 Object[] resultarray = result.toArray();
-			for (int i=0;i<resultarray.length;i++)
-			{
-				Log.v("", " from:"+((BaseDTObject)resultarray[i]).getFromTime()+" to:"+((BaseDTObject)resultarray[i]).getToTime());
-			}
+
 			if (result != null) {
 				addObjects(result);
 			}

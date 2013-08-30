@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package eu.trentorise.smartcampus.template.territory.fragment;
+package eu.trentorise.smartcampus.template.territory.fragment.map;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -305,27 +305,6 @@ public class MapManager {
 		return bitmap;
 	}
 
-	private static Bitmap writeOnStoryMarker(Context mContext, int drawableId, String text) {
-		float scale = mContext.getResources().getDisplayMetrics().density;
-
-		Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), drawableId).copy(Bitmap.Config.ARGB_8888,
-				true);
-		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		paint.setTextAlign(Align.CENTER);
-		paint.setTextSize(scale * 14);
-		paint.setAntiAlias(true);
-		paint.setARGB(255, 255, 255, 255);
-
-		Canvas canvas = new Canvas(bitmap);
-		Rect bounds = new Rect();
-		paint.getTextBounds(text, 0, text.length(), bounds);
-		float x = bitmap.getWidth() / 2;
-		float y = bitmap.getHeight() / 2 - ((paint.descent() + paint.ascent()) / 2);
-
-		canvas.drawText(text, x, y, paint);
-
-		return bitmap;
-	}
 
 	private static LatLng getLatLngFromBasicObject(BaseDTObject object) {
 		LatLng latLng = null;

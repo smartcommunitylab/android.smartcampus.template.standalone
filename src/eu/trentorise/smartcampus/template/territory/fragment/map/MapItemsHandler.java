@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package eu.trentorise.smartcampus.template.territory.fragment;
+package eu.trentorise.smartcampus.template.territory.fragment.map;
 
 
 public interface MapItemsHandler {
