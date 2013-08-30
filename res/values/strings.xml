@@ -36,6 +36,7 @@
     
 	<string name="empty" />
     <string name="add">Add</string>
+    <string name="no_items">No items found</string>
 
     <string name="user_mp_more">&#8230;</string>
     <string name="user_mp_more_new">+</string>
@@ -65,6 +66,7 @@
     <string name="groups_title">Groups</string>
     <string name="campus_title">Campus</string>
 
+    <!-- Mobility strings -->
     <string name="mobility_plan_from">Start</string>
     <string name="mobility_plan_to">Destination</string>
     <string name="mobility_plan_when">Date and time</string>
@@ -75,7 +77,39 @@
     
     <string name="logout">Logout</string>
     
-<!--     territory string -->
+        <!-- territory string -->
+    <string name="categories_event_generic">Other</string>
 
+    <!-- Transport types -->
+    <string name="ttype_transit">Transit</string>
+    <string name="ttype_car">Car</string>
+    <!-- <string name="ttype_bicycle">Bike</string> -->
+    <!-- <string name="ttype_sharedbike">Shared bike</string> -->
+    <!-- <string name="ttype_sharedbike_wo_station">Shared bike without station</string> -->
+    <!-- <string name="ttype_sharedbike_wo_station">Shared bike</string> -->
+    <!-- <string name="ttype_car_w_parking">Car with parking</string> -->
+    <!-- <string name="ttype_sharedcar">Shared car</string> -->
+    <!-- <string name="ttype_sharedcar_wo_station">Shared car without station</string> -->
+    <!-- <string name="ttype_sharedcar_wo_station">Shared car</string> -->
+    <!-- <string name="ttype_bus">Bus</string> -->
+    <!-- <string name="ttype_train">Train</string> -->
+    <string name="ttype_walk">Walking</string>
+    <!-- <string name="ttype_gondola">Gondola</string> -->
+    <!-- <string name="ttype_shuttle">Shuttle</string> -->
+
+
+    <!-- Leg strings -->
+    <string name="leg_from">from</string>
+    <string name="leg_to">to</string>
+    <string name="leg_bike_pick_up">pick up a bike at</string>
+    <string name="leg_bike_leave">leave the bike at</string>
+    <string name="leg_car_pick_up">pick up a car at</string>
+    <string name="leg_car_leave">leave the car at</string>
+    <string name="leg_bus_line">line</string>
+    <string name="leg_train">train</string>
+    <string name="leg_move">Move</string>
+    <string name="leg_delay">There is a delay:</string>
+    
+	<!-- territory string -->
 	<string name="categories_event_generic">Other</string>
 </resources>

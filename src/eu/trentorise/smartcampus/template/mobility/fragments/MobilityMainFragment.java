@@ -1,36 +1,49 @@
 package eu.trentorise.smartcampus.template.mobility.fragments;
 
+import it.sayservice.platform.smartplanner.data.message.Itinerary;
 import it.sayservice.platform.smartplanner.data.message.Position;
+import it.sayservice.platform.smartplanner.data.message.TType;
 import it.sayservice.platform.smartplanner.data.message.journey.SingleJourney;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import eu.trentorise.smartcampus.template.custom.LocationHelper;
-import eu.trentorise.smartcampus.template.mobility.MobilityHelper;
 import smartcampus.android.template.standalone.R;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.internal.ch;
 import com.google.android.gms.maps.model.LatLng;
 
+import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
+import eu.trentorise.smartcampus.mobilityservice.MobilityPlannerService;
+import eu.trentorise.smartcampus.template.Constants;
 import eu.trentorise.smartcampus.template.custom.LocationHelper;
 import eu.trentorise.smartcampus.template.mobility.AddressSelectActivity;
 import eu.trentorise.smartcampus.template.mobility.MobilityHelper;
@@ -108,7 +121,6 @@ public class MobilityMainFragment extends Fragment {
 			}
 		});
 
-		// TODO: select from using the map
 		btnFromMap.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -148,7 +160,6 @@ public class MobilityMainFragment extends Fragment {
 			}
 		});
 
-		// TODO: select from using the map
 		btnToMap.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -193,6 +204,44 @@ public class MobilityMainFragment extends Fragment {
 		});
 
 		/*
+		 * OPTIONS
+		 */
+		final TableLayout tTypesTableLayout = (TableLayout) getView().findViewById(R.id.transporttypes_table);
+		tTypesTableLayout.removeAllViews(); // prevents duplications
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		tTypesTableLayout.setShrinkAllColumns(true);
+
+		TableRow tableRow = new TableRow(getActivity());
+		for (int tCounter = 0; tCounter < MobilityHelper.TTYPES_ALLOWED.length; tCounter++) {
+			TType tType = MobilityHelper.TTYPES_ALLOWED[tCounter];
+
+			// if (tCounter % 2 == 0) {
+			// tableRow = new TableRow(getActivity());
+			// tableRow.setGravity(Gravity.CENTER_VERTICAL);
+			// tableRow.setLayoutParams(params);
+			// }
+
+			CheckBox cb = new CheckBox(getActivity());
+			cb.setText(MobilityHelper.getTTypeUIString(getActivity(), tType));
+			// cb.setTextColor(getActivity().getResources().getColor(android.R.color.black));
+			cb.setTag(tType);
+
+			if (tCounter == 0) {
+				cb.setChecked(true);
+			}
+
+			tableRow.addView(cb);
+
+			if (tableRow.getChildCount() == 3 || (tCounter + 1 == MobilityHelper.TTYPES_ALLOWED.length)) {
+				tTypesTableLayout.addView(tableRow);
+
+				tableRow = new TableRow(getActivity());
+				tableRow.setGravity(Gravity.CENTER_VERTICAL);
+				tableRow.setLayoutParams(params);
+			}
+		}
+
+		/*
 		 * Search button
 		 */
 		btnSearch.setOnClickListener(new OnClickListener() {
@@ -201,6 +250,7 @@ public class MobilityMainFragment extends Fragment {
 				// build SingleJourney
 				SingleJourney sj = new SingleJourney();
 
+				// points
 				sj.setFrom(positionFrom);
 				sj.setTo(positionTo);
 
@@ -208,10 +258,21 @@ public class MobilityMainFragment extends Fragment {
 				sj.setDate(MobilityHelper.FORMAT_DATE_SMARTPLANNER.format((Date) tvDate.getTag()));
 				sj.setDepartureTime(MobilityHelper.FORMAT_TIME_SMARTPLANNER.format((Date) tvTime.getTag()));
 
-				// TODO
-				// sj.setTransportTypes((TType[])
-				// userPrefsHolder.getTransportTypes());
-				// sj.setRouteType(userPrefsHolder.getRouteType());
+				List<TType> tTypes = new ArrayList<TType>();
+				for (int i = 0; i < tTypesTableLayout.getChildCount(); i++) {
+					TableRow row = (TableRow) tTypesTableLayout.getChildAt(i);
+					for (int j = 0; j < row.getChildCount(); j++) {
+						CheckBox checkBox = (CheckBox) row.getChildAt(j);
+						if (checkBox.isChecked()) {
+							tTypes.add((TType) checkBox.getTag());
+						}
+					}
+				}
+
+				sj.setTransportTypes(tTypes.toArray(new TType[] {}));
+				sj.setRouteType(MobilityHelper.RTYPE_DEFAULT);
+
+				new PlanSingleJourneyAsyncTask().execute(sj);
 			}
 		});
 	}
@@ -241,9 +302,9 @@ public class MobilityMainFragment extends Fragment {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (ADDRESS_SELECT == requestCode) {
+		if (ADDRESS_SELECT == requestCode && data != null && data.getStringExtra(ADDRESS_SELECT_FIELD) != null) {
 			try {
-				if (data.getStringExtra(ADDRESS_SELECT_FIELD_FROM) != null) {
+				if (data.getStringExtra(ADDRESS_SELECT_FIELD).equals(ADDRESS_SELECT_FIELD_FROM)) {
 					positionFrom = point2position((LatLng) data.getParcelableExtra(ADDRESS_SELECT_POINT));
 					if (positionFrom != null) {
 						tvFromText.setText(positionFrom.getName());
@@ -252,10 +313,10 @@ public class MobilityMainFragment extends Fragment {
 					} else {
 						Toast.makeText(getActivity(), R.string.mobility_plan_wait_location, Toast.LENGTH_SHORT).show();
 					}
-				} else if (data.getStringExtra(ADDRESS_SELECT_FIELD_TO) != null) {
+				} else if (data.getStringExtra(ADDRESS_SELECT_FIELD).equals(ADDRESS_SELECT_FIELD_TO)) {
 					positionTo = point2position((LatLng) data.getParcelableExtra(ADDRESS_SELECT_POINT));
 					if (positionTo != null) {
-						tvToText.setText(positionFrom.getName());
+						tvToText.setText(positionTo.getName());
 						llToButtons.setVisibility(View.GONE);
 						llTo.setVisibility(View.VISIBLE);
 					} else {
@@ -269,6 +330,11 @@ public class MobilityMainFragment extends Fragment {
 	}
 
 	private Position location2position() throws IOException {
+		/*
+		 * This method uses the native Android Geocoder to obtain an address
+		 * providing only latitude and longitude. It takes by default the
+		 * current position!
+		 */
 		Position position = null;
 
 		if (mLocationHelper.getLocation() != null) {
@@ -282,14 +348,19 @@ public class MobilityMainFragment extends Fragment {
 					name += ", ";
 				}
 			}
-			position = new Position(name, null, null, Double.toString(firstAddress.getLatitude()), Double.toString(firstAddress
-					.getLongitude()));
+			position = new Position(name, null, null, Double.toString(firstAddress.getLongitude()),
+					Double.toString(firstAddress.getLatitude()));
 		}
 
 		return position;
 	}
 
 	private Position point2position(LatLng point) throws IOException {
+		/*
+		 * This method uses the native Android Geocoder to obtain an address
+		 * providing only latitude and longitude. It takes a LatLng point as
+		 * input!
+		 */
 		Position position = null;
 
 		if (point != null) {
@@ -302,11 +373,50 @@ public class MobilityMainFragment extends Fragment {
 					name += ", ";
 				}
 			}
-			position = new Position(name, null, null, Double.toString(firstAddress.getLatitude()), Double.toString(firstAddress
-					.getLongitude()));
+			position = new Position(name, null, null, Double.toString(firstAddress.getLongitude()),
+					Double.toString(firstAddress.getLatitude()));
 		}
 
 		return position;
+	}
+
+	/*
+	 * AsyncTasks
+	 */
+	private class PlanSingleJourneyAsyncTask extends AsyncTask<SingleJourney, Void, List<Itinerary>> {
+		/*
+		 * This AsyncTask uses the MobilityPlannerService functionalities from
+		 * mobilityservice.client: after MobilityPlannerService initialization you have to get the user token and provide it with 
+		 */
+
+		private SingleJourney singleJourney;
+
+		@Override
+		protected List<Itinerary> doInBackground(SingleJourney... params) {
+			singleJourney = params[0];
+
+			try {
+				MobilityPlannerService plannerService = new MobilityPlannerService(Constants.MOBILITY_SERVICE);
+				String token = new EmbeddedSCAccessProvider().readToken(getActivity(), Constants.CLIENT_ID,
+						Constants.CLIENT_SECRET);
+				List<Itinerary> itineraries = plannerService.planSingleJourney(singleJourney, token);
+				return itineraries;
+			} catch (Exception e) {
+				Log.e(getClass().getSimpleName(), e.getMessage());
+			}
+
+			return Collections.emptyList();
+		}
+
+		@Override
+		protected void onPostExecute(List<Itinerary> result) {
+			FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+			Fragment fragment = ItineraryChoicesFragment.newInstance(singleJourney, result);
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fragmentTransaction.replace(android.R.id.content, fragment, fragment.getTag());
+			fragmentTransaction.addToBackStack(fragment.getTag());
+			fragmentTransaction.commit();
+		}
 	}
 
 }
