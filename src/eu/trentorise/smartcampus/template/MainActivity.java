@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.template;
 
+import eu.trentorise.smartcampus.template.communicator.CommunicatorActivity;
 import eu.trentorise.smartcampus.template.mobility.MobilityActivity;
 import eu.trentorise.smartcampus.template.social.SocialActivity;
 import eu.trentorise.smartcampus.template.territory.TerritoryActivity;
@@ -105,6 +106,14 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(MainActivity.this, MobilityActivity.class);
+				MainActivity.this.startActivity(intent);
+			}
+		});
+		
+		findViewById(R.id.communicator_button).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, CommunicatorActivity.class);
 				MainActivity.this.startActivity(intent);
 			}
 		});
