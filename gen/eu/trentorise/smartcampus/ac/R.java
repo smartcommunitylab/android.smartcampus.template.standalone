@@ -11,9 +11,9 @@ public final class R {
 		public static final int close = 0x7f020000;
 	}
 	public static final class id {
-		public static final int webview = 0x7f06004e;
+		public static final int webview = 0x7f060065;
 	}
 	public static final class layout {
-		public static final int web = 0x7f03000f;
+		public static final int web = 0x7f030015;
 	}
 }
