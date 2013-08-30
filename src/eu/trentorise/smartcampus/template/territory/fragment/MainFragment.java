@@ -1,15 +1,16 @@
 package eu.trentorise.smartcampus.template.territory.fragment;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import smartcampus.android.template.standalone.R;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
@@ -21,37 +22,34 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
-import eu.trentorise.smartcampus.template.social.custom.data.CMHelper;
+import eu.trentorise.smartcampus.ac.SCAccessProvider;
+import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
+import eu.trentorise.smartcampus.template.Constants;
 import eu.trentorise.smartcampus.template.territory.custom.data.TerritoryHelper;
 import eu.trentorise.smartcampus.template.territory.custom.data.TerritoryHelper.CategoryDescriptor;
+import eu.trentorise.smartcampus.territoryservice.TerritoryService;
 import eu.trentorise.smartcampus.territoryservice.model.BaseDTObject;
 import eu.trentorise.smartcampus.territoryservice.model.EventObject;
-import eu.trentorise.smartcampus.territoryservice.model.POIObject;
+import eu.trentorise.smartcampus.territoryservice.model.ObjectFilter;
 
 public class MainFragment extends MapFragment implements MapItemsHandler, OnCameraChangeListener,
 		OnMarkerClickListener, MapObjectContainer {
 
 	public static final String ARG_OBJECTS = "objects";
-	public static final String ARG_POI_CATEGORY = "poi category";
 	public static final String ARG_EVENT_CATEGORY = "event category";
 
 	protected GoogleMap mMap;
 	private static View view;
-//	private String[] poiCategories = null;
 	private String[] eventsCategories = null;
 	private String[] eventsNotTodayCategories = null;
 	private Collection<? extends BaseDTObject> objects;
@@ -69,7 +67,6 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		// return inflater.inflate(R.layout.homelayout, container, false);
 		if (view != null) {
 			ViewGroup parent = (ViewGroup) view.getParent();
 			if (parent != null)
@@ -94,16 +91,7 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 			eventsCategories = Arrays.asList(eventCategory.toArray()).toArray(
 					new String[eventCategory.toArray().length]);
 		}
-//		CategoryDescriptor[] poisDefault = DTParamsHelper.getDefaultArrayByParams(TerritoryHelper.CATEGORY_TYPE_POIS);
-//		if (poisDefault != null) {
-//			List<String> poisCategory = new ArrayList<String>();
-//			for (CategoryDescriptor poi : poisDefault)
-//				poisCategory.add(poi.category);
-//			poiCategories = Arrays.asList(poisCategory.toArray()).toArray(new String[poisCategory.toArray().length]);
-//
-//		}
 
-//		setHasOptionsMenu(true);
 	}
 
 	/**
@@ -118,7 +106,6 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		}
 
 		if (getArguments() != null && getArguments().containsKey(ARG_OBJECTS)) {
-//			poiCategories = null;
 			eventsCategories = null;
 			List<BaseDTObject> list = (List<BaseDTObject>) getArguments().getSerializable(ARG_OBJECTS);
 			new AsyncTask<List<BaseDTObject>, Void, List<BaseDTObject>>() {
@@ -133,23 +120,15 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 				}
 			}.execute(list);
 		}
-//		else if (getArguments() != null && getArguments().containsKey(ARG_POI_CATEGORY)) {
-//			eventsCategories = null;
-//			setPOICategoriesToLoad(getArguments().getString(ARG_POI_CATEGORY));
-//		} 
+
 		else if (getArguments() != null && getArguments().containsKey(ARG_EVENT_CATEGORY)) {
-//			poiCategories = null;
 			setEventCategoriesToLoad(getArguments().getString(ARG_EVENT_CATEGORY));
 		}
-//		else {
-//			if (poiCategories != null) {
-//				setPOICategoriesToLoad(poiCategories);
-//			}
-			if (eventsCategories != null) {
-				setEventCategoriesToLoad(eventsCategories);
-			}
+
+		if (eventsCategories != null) {
+			setEventCategoriesToLoad(eventsCategories);
 		}
-//	}
+	}
 
 	@Override
 	public void onResume() {
@@ -158,9 +137,7 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 			getSupportMap().setMyLocationEnabled(true);
 			getSupportMap().setOnCameraChangeListener(this);
 			getSupportMap().setOnMarkerClickListener(this);
-			// if (objects != null) {
-			// render(objects);
-			// }
+
 		}
 	}
 
@@ -182,12 +159,8 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-//		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_show_places_layers, 1,
-//				R.string.menu_item__places_layers_text);
-//		item.setIcon(R.drawable.ic_menu_pois);
-//		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_show_events_layers, 1,
-				"Events");
+
+		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_show_events_layers, 1, "Events");
 		item.setIcon(R.drawable.ic_menu_events);
 		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		super.onPrepareOptionsMenu(menu);
@@ -195,14 +168,10 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-//		if (item.getItemId() == R.id.menu_item_show_places_layers) {
-//			MapLayerDialogHelper.createPOIDialog(getActivity(), this, getString(R.string.layers_title_places),
-//					poiCategories).show();
-//			return true;
-//		} else 
-			if (item.getItemId() == R.id.menu_item_show_events_layers) {
-			Dialog eventsDialog = MapLayerDialogHelper.createEventsDialog(getActivity(), this,
-					"Events", eventsCategories);
+
+		if (item.getItemId() == R.id.menu_item_show_events_layers) {
+			Dialog eventsDialog = MapLayerDialogHelper.createEventsDialog(getActivity(), this, "Events",
+					eventsCategories);
 			eventsDialog.show();
 			return true;
 		} else {
@@ -210,29 +179,8 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		}
 	}
 
-//	public void setPOICategoriesToLoad(final String... categories) {
-//		this.poiCategories = categories;
-//		/* actually only event or poi at the same time */
-//		this.eventsCategories = null;
-//
-//		new SCAsyncTask<Void, Void, Collection<? extends BaseDTObject>>(getActivity(), new MapLoadProcessor(
-//				getActivity(), this, getSupportMap()) {
-//			@Override
-//			protected Collection<? extends BaseDTObject> getObjects() {
-//				try {
-//					/* check if todays is checked and cat with searchTodayEvents */
-//					return DTHelper.getPOIByCategory(0, -1, categories);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					return Collections.emptyList();
-//				}
-//			}
-//
-//		}).execute();
-//	}
-
 	private void onBaseDTObjectTap(BaseDTObject o) {
-		new InfoDialog().newInstance(o).show(getActivity().getFragmentManager(), "me");
+		new InfoDialogSingleEvent().newInstance(o).show(getActivity().getFragmentManager(), "me");
 	}
 
 	private void onBaseDTObjectsTap(List<BaseDTObject> list) {
@@ -242,25 +190,8 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 			onBaseDTObjectTap(list.get(0));
 			return;
 		}
-//		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-//		Fragment fragment = null;
-//		Bundle args = new Bundle();
-//		if (list.get(0) instanceof EventObject) {
-//			fragment = new EventsListingFragment();
-//			args.putSerializable(SearchFragment.ARG_LIST, new ArrayList(list));
-//		} 
-//		else if (list.get(0) instanceof POIObject) {
-//			fragment = new PoisListingFragment();
-//			args.putSerializable(SearchFragment.ARG_LIST, new ArrayList(list));
-//		}
-//		if (fragment != null) {
-//			fragment.setArguments(args);
-//			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//			// fragmentTransaction.detach(this);
-//			fragmentTransaction.replace(HomeFragment.this.getId(), fragment, "me");
-//			fragmentTransaction.addToBackStack(fragment.getTag());
-//			fragmentTransaction.commit();
-//		}
+		else new InfoDialogMultiEvent().newInstance(list,getActivity()).show(getActivity().getFragmentManager(), "me");
+
 	}
 
 	@Override
@@ -269,34 +200,8 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		this.eventsNotTodayCategories = categories;
 
 		/* actually only event or poi at the same time */
-//		this.poiCategories = null;
-
-		// mItemizedoverlay.clearMarkers();
-//		new MapLoadProcessor().execute(((EditText)getView().findViewById(R.id.people_search)).getText().toString());
 		new MapLoadProcessor().execute();
 
-//		new SCAsyncTask<Void, Void, Collection<? extends BaseDTObject>>(getActivity(), new MapLoadProcessor(
-//				getActivity(), this, getSupportMap()) {
-//			@Override
-//			protected Collection<? extends BaseDTObject> getObjects() {
-//				try {
-//					/* check if todays is checked and cat with searchTodayEvents */
-//
-//					if (isTodayIncluded()) {
-//						List<EventObject> newList = new ArrayList<EventObject>();
-//						newList.addAll(DTHelper.searchTodayEvents(0, -1, ""));
-//						if (categories != null)
-//							newList.addAll(DTHelper.getEventsByCategories(0, -1, eventsNotTodayCategories));
-//						return newList;
-//					} else
-//						return DTHelper.getEventsByCategories(0, -1, categories);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					return Collections.emptyList();
-//				}
-//			}
-//
-//		}).execute();
 	}
 
 	private boolean isTodayIncluded() {
@@ -361,38 +266,64 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 		if (getSupportMap() != null) {
 			getSupportMap().clear();
 			if (objects != null && getActivity() != null) {
-				List<MarkerOptions> cluster = MapManager.ClusteringHelper.cluster(getActivity()
-						.getApplicationContext(), getSupportMap(), objects);
+				List<MarkerOptions> cluster = MapManager.ClusteringHelper.cluster(
+						getActivity().getApplicationContext(), getSupportMap(), objects);
 				MapManager.ClusteringHelper.render(getSupportMap(), cluster);
 			}
 		}
 
 	}
 
-	@Override
-	public void setPOICategoriesToLoad(String... categories) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	private class MapLoadProcessor extends AsyncTask<Void, Void, Collection<? extends BaseDTObject>> {
 
-		
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 		}
 
-@Override
-protected Collection<? extends BaseDTObject> doInBackground(Void... params) {
-	return null;
-}
-@Override
-protected void onPostExecute(Collection<? extends BaseDTObject> result) {
-	super.onPostExecute(result);
-//	if (objects != null) {
-//		MainFragment.addObjects(objects);
-//	}
-}
+		@Override
+		protected Collection<? extends BaseDTObject> doInBackground(Void... params) {
+			TerritoryService service = new TerritoryService("https://vas-dev.smartcampuslab.it/core.territory");
+			ObjectFilter filter = new ObjectFilter();
+//			// today    
+			Calendar date = new GregorianCalendar();
+//			// reset hour, minutes, seconds and millis
+			date.set(Calendar.HOUR_OF_DAY, 0);
+			date.set(Calendar.MINUTE, 0);
+			date.set(Calendar.SECOND, 0);
+			date.set(Calendar.MILLISECOND, 0);
+			filter.setFromTime(date.getTimeInMillis());
+
+			// next day
+			date.set(Calendar.HOUR_OF_DAY, 23);
+			date.set(Calendar.MINUTE, 59);
+			date.set(Calendar.SECOND, 59);
+			date.set(Calendar.MILLISECOND, 999);
+			filter.setToTime(date.getTimeInMillis());
+//			filter.setFromTime(date.getTimeInMillis());
+//			filter.setToTime(null);
+			try {
+				SCAccessProvider mAccessProvider = new EmbeddedSCAccessProvider();
+				List<EventObject> events = service.getEvents(filter,
+						mAccessProvider.readToken(getActivity(), Constants.CLIENT_ID, Constants.CLIENT_SECRET));
+				return events;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return Collections.emptyList();
+		}
+
+		@Override
+		protected void onPostExecute(Collection<? extends BaseDTObject> result) {
+			super.onPostExecute(result);
+			BaseDTObject[] resultarray= (BaseDTObject[]) result.toArray();
+			for (int i=0;i<resultarray.length;i++)
+			{
+				
+			}
+			if (result != null) {
+				addObjects(result);
+			}
+		}
 	}
 }

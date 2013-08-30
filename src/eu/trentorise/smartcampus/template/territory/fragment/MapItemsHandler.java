@@ -15,11 +15,9 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.template.territory.fragment;
 
-import java.util.ArrayList;
 
 public interface MapItemsHandler {
 
-	public void setPOICategoriesToLoad(final String ... categories);
 	public void setEventCategoriesToLoad(final String ... categories);
 
 }

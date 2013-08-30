@@ -17,7 +17,6 @@ package eu.trentorise.smartcampus.template.territory.fragment;
 
 import smartcampus.android.template.standalone.R;
 import android.app.DialogFragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
@@ -27,26 +26,22 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.template.territory.custom.data.TerritoryHelper;
 import eu.trentorise.smartcampus.territoryservice.model.BaseDTObject;
 import eu.trentorise.smartcampus.territoryservice.model.EventObject;
-import eu.trentorise.smartcampus.territoryservice.model.POIObject;
 
 
 
-public class InfoDialog extends DialogFragment {
+public class InfoDialogSingleEvent extends DialogFragment {
 	private BaseDTObject data;
 
-	public InfoDialog() {
+	public InfoDialogSingleEvent() {
 	}
 
-//	public InfoDialog(BaseDTObject o) {
-//		this.data = o;
-//	}
 
-	public static final InfoDialog newInstance( BaseDTObject o)
+
+	public static final InfoDialogSingleEvent newInstance( BaseDTObject o)
 	 {
-		InfoDialog fragment = new InfoDialog();
+		InfoDialogSingleEvent fragment = new InfoDialogSingleEvent();
 	     Bundle bundle = new Bundle();   
 	     bundle.putSerializable("BaseDTOObject", o);
 	     fragment.setArguments(bundle);
@@ -54,28 +49,23 @@ public class InfoDialog extends DialogFragment {
 	 }
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//		if (data instanceof POIObject) {
-//			getDialog().setTitle("Title");
-//		} else
+
 			if (data instanceof EventObject) {
 			getDialog().setTitle("Event");
 		}
 		data = (BaseDTObject) getArguments().getSerializable("BaseDTOObject");
-		return inflater.inflate(R.layout.mapdialog, container, false);
+		return inflater.inflate(R.layout.mapdialogsingle, container, false);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
 		TextView msg = (TextView) getDialog().findViewById(R.id.mapdialog_msg);
+		getDialog().setTitle("Event Detail");
 
-//		if (data instanceof POIObject) {
-//			msg.setText(Html.fromHtml("<h2>" + ((POIObject) data).getTitle() + "</h2><br/><p>"
-//					+ ((POIObject) data).shortAddress() + "</p>"));
-//		} else
+
 			if (data instanceof EventObject) {
 			EventObject event = (EventObject) data;
-//			POIObject poi = DTHelper.findPOIById(event.getPoiId());
 			String msgText = "";
 			msgText += "<h2>";
 			msgText += event.getTitle();
@@ -86,9 +76,7 @@ public class InfoDialog extends DialogFragment {
 				msgText += "</p><br/>";
 			}
 			msgText += "<p>" + event.getTiming() + "</p>";
-//			if (poi != null) {
-//				msgText += "<p>" + poi.getPoi().getCity() + "</p>";
-//			}
+
 			msg.setText(Html.fromHtml(msgText));
 		}
 
@@ -102,33 +90,6 @@ public class InfoDialog extends DialogFragment {
 			}
 		});
 
-//		b = (Button) getDialog().findViewById(R.id.mapdialog_ok);
-//		b.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
-//				Bundle args = new Bundle();
-//
-//				if (data instanceof POIObject) {
-//					PoiDetailsFragment fragment = new PoiDetailsFragment();
-//					args.putString(PoiDetailsFragment.ARG_POI_ID, data.getId());
-//					fragment.setArguments(args);
-//					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//					fragmentTransaction.replace(android.R.id.content, fragment, "me");
-//					fragmentTransaction.addToBackStack(fragment.getTag());
-//				} else 
-//					if (data instanceof EventObject) {
-//					EventDetailsFragment fragment = new EventDetailsFragment();
-//					args.putString(EventDetailsFragment.ARG_EVENT_ID, (data.getId()));
-//					fragment.setArguments(args);
-//					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//					fragmentTransaction.replace(android.R.id.content, fragment, "me");
-//					fragmentTransaction.addToBackStack(fragment.getTag());
-//				}
-//				fragmentTransaction.commit();
-//				getDialog().dismiss();
-//			}
-//		});
 
 	}
 }

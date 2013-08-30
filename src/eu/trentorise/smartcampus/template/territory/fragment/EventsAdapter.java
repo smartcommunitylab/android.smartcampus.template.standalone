@@ -72,8 +72,7 @@ public class EventsAdapter extends BaseAdapter {
 
 		convertView = inflater.inflate(R.layout.today_events_row, null);
 
-		holder.events_name = (TextView) convertView.findViewById(R.id.home_events_text);
-		holder.chkinterest = (CheckBox) convertView.findViewById(R.id.home_events_checked);
+		holder.events_name = (TextView) convertView.findViewById(R.id.events_text);
 
 		holder.events_name.setText(eventDescription.get(pos));
 		if (context.getResources().getString(R.string.categories_event_today).equals(eventDescription.get(pos))) {

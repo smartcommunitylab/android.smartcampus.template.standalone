@@ -74,9 +74,7 @@ public class MapManager {
 		MapManager.mapView.setBuiltInZoomControls(true);
 	}
 
-//	public static GeoPoint requestMyLocation(Context ctx) {
-//		return LocationHelper.getLocation();
-//	}
+
 
 	public static void fitMapWithOverlays(Collection<? extends BaseDTObject> objects, GoogleMap map) {
 		double[] ll = null, rr = null;
@@ -106,24 +104,7 @@ public class MapManager {
 		}
 	}
 
-//	public static MarkerOptions createStoryStepMarker(Context ctx, BaseDTObject obj, int pos, boolean selected) {
-//		LatLng latLng = getLatLngFromBasicObject(obj);
-//
-//		int markerIcon = selected ? R.drawable.selected_step : R.drawable.step;
-//
-//		BitmapDescriptor bd = BitmapDescriptorFactory.fromBitmap(writeOnStoryMarker(ctx, markerIcon,
-//				Integer.toString(pos)));
-//		MarkerOptions marker = new MarkerOptions().anchor(0.5f, 0.5f).position(latLng).icon(bd).title("" + pos);
-//		return marker;
-//	}
-//
-//	public static PolylineOptions createStoryStepLine(Context ctx, BaseDTObject from, BaseDTObject to) {
-//		LatLng latLngFrom = getLatLngFromBasicObject(from);
-//		LatLng latLngTo = getLatLngFromBasicObject(to);
-//		PolylineOptions line = new PolylineOptions().add(latLngFrom, latLngTo)
-//				.color(Color.parseColor(ctx.getString(R.color.dtappcolor))).width(6);
-//		return line;
-//	}
+
 
 	/*
 	 * CLUSTERING
@@ -301,51 +282,6 @@ public class MapManager {
 
 	}
 
-//	public static void switchToMapView(ArrayList<BaseDTObject> list, Fragment src) {
-//		FragmentTransaction fragmentTransaction = src.getActivity().getSupportFragmentManager().beginTransaction();
-//		HomeFragment fragment = new HomeFragment();
-//		Bundle args = new Bundle();
-//		args.putSerializable(HomeFragment.ARG_OBJECTS, list);
-//		fragment.setArguments(args);
-//		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//		// fragmentTransaction.detach(src);
-//		fragmentTransaction.replace(src.getId(), fragment, src.getTag());
-//		fragmentTransaction.addToBackStack(fragment.getTag());
-//		fragmentTransaction.commit();
-//
-//	}
-//
-//	public static void switchToMapView(String category, String argType, Fragment src) {
-//		FragmentTransaction fragmentTransaction = src.getActivity().getSupportFragmentManager().beginTransaction();
-//		HomeFragment fragment = new HomeFragment();
-//		Bundle args = new Bundle();
-//		args.putString(argType, category);
-//		fragment.setArguments(args);
-//		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//		// fragmentTransaction.detach(src);
-//		fragmentTransaction.replace(src.getId(), fragment, src.getTag());
-//		fragmentTransaction.addToBackStack(fragment.getTag());
-//		fragmentTransaction.commit();
-//
-//	}
-
-//	private static int objectCertified(BaseDTObject o) {
-//		if (o.getCustomData() != null) {
-//			if ((o instanceof EventObject) && ((Boolean) o.getCustomData().get("certified"))) {
-//				/* se ceretificato e evento */
-//				return R.drawable.ic_marker_e_family_certified;
-//			}
-//
-//			/* se certificato e poi */
-//			String status = (String) o.getCustomData().get("status");
-//			if ((o instanceof POIObject)
-//					&& (("Certificato finale").equals(status) || ("Certificato base").equals(status))) {
-//				return R.drawable.ic_marker_p_family_certified;
-//			}
-//		}
-//
-//		return CategoryHelper.getMapIconByType(o.getType());
-//	}
 
 	private static Bitmap writeOnMarker(Context mContext, int drawableId, String text) {
 		float scale = mContext.getResources().getDisplayMetrics().density;
