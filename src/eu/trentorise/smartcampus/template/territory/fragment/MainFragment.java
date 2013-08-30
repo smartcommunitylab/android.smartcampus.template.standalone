@@ -289,20 +289,20 @@ public class MainFragment extends MapFragment implements MapItemsHandler, OnCame
 //			// today    
 			Calendar date = new GregorianCalendar();
 //			// reset hour, minutes, seconds and millis
-//			date.set(Calendar.HOUR_OF_DAY, 0);
-//			date.set(Calendar.MINUTE, 0);
-//			date.set(Calendar.SECOND, 0);
-//			date.set(Calendar.MILLISECOND, 0);
-//			filter.setFromTime(date.getTimeInMillis());
+			date.set(Calendar.HOUR_OF_DAY, 0);
+			date.set(Calendar.MINUTE, 0);
+			date.set(Calendar.SECOND, 0);
+			date.set(Calendar.MILLISECOND, 0);
+			filter.setFromTime(date.getTimeInMillis());
 
 			// next day
-//			date.set(Calendar.HOUR_OF_DAY, 23);
-//			date.set(Calendar.MINUTE, 59);
-//			date.set(Calendar.SECOND, 59);
-//			date.set(Calendar.MILLISECOND, 999);
-//			filter.setToTime(date.getTimeInMillis());
-			filter.setFromTime(date.getTimeInMillis());
-			filter.setToTime(null);
+			date.set(Calendar.HOUR_OF_DAY, 23);
+			date.set(Calendar.MINUTE, 59);
+			date.set(Calendar.SECOND, 59);
+			date.set(Calendar.MILLISECOND, 999);
+			filter.setToTime(date.getTimeInMillis());
+//			filter.setFromTime(date.getTimeInMillis());
+//			filter.setToTime(null);
 			try {
 				SCAccessProvider mAccessProvider = new EmbeddedSCAccessProvider();
 				List<EventObject> events = service.getEvents(filter,
