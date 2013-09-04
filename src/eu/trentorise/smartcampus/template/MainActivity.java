@@ -205,12 +205,22 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.logout:
-			try {
-				mAccessProvider.logout(this);
-			} catch (AACException e) {
-				e.printStackTrace();
-			}
-			finish();
+			new AsyncTask<Void, Void, Boolean>() {
+				@Override
+				protected Boolean doInBackground(Void... params) {
+					try {
+						return mAccessProvider.logout(MainActivity.this);
+					} catch (AACException e) {
+						return false;
+					}
+				}
+				protected void onPostExecute(Boolean result) {
+					if (!result) {
+						Toast.makeText(MainActivity.this, "Failed to logout", Toast.LENGTH_LONG).show();
+					}
+					finish();
+				}
+			}.execute();
 		default:
 			return super.onOptionsItemSelected(item);
 		}
